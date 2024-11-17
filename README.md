@@ -1,0 +1,3 @@
+Software Metrics
+
+This project aims to provide Java developers with a quantitative measure of the health and quality of their projects. By analyzing various code metrics such as cyclomatic complexity, Halstead metrics, class complexity, logical LOC, code churn, clone detection, comment ratio, code smells, coupling, cohesion, and adherence to SOLID design principles, the program generates a comprehensive report to help identify areas for improvement. The tool is designed to assist developers in maintaining clean, efficient, and scalable codebases by providing real-time insights into project quality and streamlining the development process.
