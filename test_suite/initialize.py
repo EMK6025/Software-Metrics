@@ -1,4 +1,3 @@
-import os
 import sqlite3
 
 # Relative file path to the database
