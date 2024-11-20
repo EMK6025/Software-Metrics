@@ -2,15 +2,10 @@ import os
 import sqlite3
 
 # Relative file path to the database
-db_path = os.path.join('databases', '../database.db')
-
-# Ensure the directory exists
-os.makedirs(os.path.dirname(db_path), exist_ok=True)
+db_path = '../database.db'
 
 # Connect/create database
 conn = sqlite3.connect(db_path)
-
-
 cursor = conn.cursor()
 
 # SQL statement to create a table
