@@ -19,7 +19,6 @@ create_projects_table_query = """
     project_id INTEGER PRIMARY KEY AUTOINCREMENT,
     project_name TEXT NOT NULL,
     path_to_folder TEXT NOT NULL,
-    path_to_file TEXT,
     user_id TEXT
 );
 """
