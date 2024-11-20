@@ -10,6 +10,7 @@ os.makedirs(os.path.dirname(db_path), exist_ok=True)
 # Connect/create database
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
+
 insert_cmd = "INSERT INTO projects (project_name, path_to_folder) VALUES (?, ?)"
 check_cmd = "SELECT 1 FROM projects WHERE project_name = ? LIMIT 1"
 
@@ -28,6 +29,10 @@ for root, dirs in os.walk('../projects/'):
             user_data = (dir, folder_path)
             cursor.execute(insert_cmd, user_data)
 
+            # Create an empty output.txt for the new dir
+            file_path = os.path.join(folder_path, 'output.txt')
+            open(file_path, 'w').close()
+
 # Save changes to database and close connection
-conn.commit()  
+conn.commit()
 conn.close()
