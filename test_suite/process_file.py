@@ -16,10 +16,6 @@ metric_name = sys.argv[3]
 # Relative file path to the database
 db_path = '../database.db'
 
-# Connect/create database
-conn = sqlite3.connect(db_path)
-cursor = conn.cursor()
-
 dir_path = os.path.join('../projects/', dir_path)
 file_path = os.path.join(dir_path, file_name)
 metric_path = os.path.join('../metrics/', metric_name)
