@@ -4,13 +4,14 @@ import sys
 
 # Ensure enough arguments are passed
 if len(sys.argv) != 3:
-    print("Usage: python process_folder.py <dir_path> <metric_name>")
+    print("Usage: python process_folder.py <dir> <metric_name>")
     sys.exit(1)
 
 # Get the values from the command line arguments
-dir_path = sys.argv[1]
+dir = sys.argv[1]
 metric_name = sys.argv[2]
 
+dir_path = os.path.join('../projects/', sys.argv[1])
 # Check if the base directory exists
 if not os.path.isdir(dir_path):
     print(f"Directory not found: {dir_path}")
@@ -21,10 +22,9 @@ for root, _, files in os.walk(dir_path):
     for file in files:
         # Process only .java files
         if file.endswith('.java'):
-            # Extract the file name (without the full path)
-            # Call process_file.py with the correct arguments
+            # Call process_file.py
             result = subprocess.run(
-                ['python', 'process_file.py', dir_path, file, metric_name],
+                ['python', 'process_file.py', root, file, metric_name],
                 capture_output=True,
                 text=True
             )

@@ -9,20 +9,20 @@ if len(sys.argv) != 4:
     sys.exit(1)
 
 # Get the values from the command line arguments
-dir_path = sys.argv[1]
+dir = sys.argv[1]
 file_name = sys.argv[2]
 metric_name = sys.argv[3]
 
 # Relative file path to the database
 db_path = '../database.db'
 
-dir_path = os.path.join('../projects/', dir_path)
+dir_path = os.path.join('../projects/', dir)
 file_path = os.path.join(dir_path, file_name)
 metric_path = os.path.join('../metrics/', metric_name)
 
 # Ensure the metric file exists
 if os.path.exists(metric_path):
-    # Run the metric by passing file_path as argument
+    # Run metric
     result = subprocess.run(['python', metric_path, file_path], capture_output=True, text=True)
 
     if result.returncode == 0:
