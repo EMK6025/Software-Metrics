@@ -5,11 +5,11 @@ import sys
 
 # Ensure enough arguments are passed
 if len(sys.argv) != 4:
-    print("Usage: python script.py <dir_name> <file_name> <metric_name>")
+    print("Usage: python process_file.py <dir_path> <file_name> <metric_name>")
     sys.exit(1)
 
 # Get the values from the command line arguments
-dir_name = sys.argv[1]
+dir_path = sys.argv[1]
 file_name = sys.argv[2]
 metric_name = sys.argv[3]
 
@@ -20,7 +20,7 @@ db_path = '../database.db'
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-dir_path = os.path.join('../projects/', dir_name)
+dir_path = os.path.join('../projects/', dir_path)
 file_path = os.path.join(dir_path, file_name)
 metric_path = os.path.join('../metrics/', metric_name)
 
