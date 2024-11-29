@@ -11,11 +11,9 @@ def metric(file_path):
         return count
     # Handle exceptions
     except FileNotFoundError:
-        print(f"File not found: {file_path}")
-        return "Error"
+        return "MetricFileNotFoundError"
     except IOError as e:
-        print(f"An error occurred: {e}")
-        return "Error"
+        return "MetricIOError"
 
 
 if __name__ == "__main__":
