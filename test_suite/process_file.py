@@ -2,7 +2,8 @@ import os
 import subprocess
 import sys
 
-def process_file(project_dir, file_name, metric_name):
+def process_file(project_name, project_dir, file_name, metric_name):
+    project_path = os.path.join('../projects/', project_name)
     dir_path = os.path.join('../projects/', project_dir)
     file_path = os.path.join(dir_path, file_name)
     metric_path = os.path.join('../metrics/', metric_name)
@@ -16,7 +17,7 @@ def process_file(project_dir, file_name, metric_name):
             try:
                 # Write the output into output.txt
                 metric_val = result.stdout.strip()
-                output_file_path = os.path.join(dir_path, "output.txt")
+                output_file_path = os.path.join(project_path, "output.txt")
                 with open(output_file_path, 'a') as output_file:
                     output_file.write(f"{file_name} {metric_name} {metric_val}\n")
             except ValueError:
@@ -28,11 +29,12 @@ def process_file(project_dir, file_name, metric_name):
 if __name__ == "__main__":
     # Ensure enough arguments are passed
     if len(sys.argv) != 4:
-        print("Usage: python process_file.py <project_dir> <file_name> <metric_name>")
+        print("Usage: python process_file.py <project_name> <project_dir> <file_name> <metric_name>")
         sys.exit(1)
 
     # Get the values from the command line arguments
-    project_dir = sys.argv[1]
-    file_name = sys.argv[2]
-    metric_name = sys.argv[3]
-    process_file(project_dir, file_name, metric_name)
+    project_name = sys.argv[1]
+    project_dir = sys.argv[2]
+    file_name = sys.argv[3]
+    metric_name = sys.argv[4]
+    process_file(project_name, project_dir, file_name, metric_name)
