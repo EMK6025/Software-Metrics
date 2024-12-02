@@ -18,7 +18,7 @@ def process_file(project_dir, file_name, metric_name):
                 metric_val = result.stdout.strip()
                 output_file_path = os.path.join(dir_path, "output.txt")
                 with open(output_file_path, 'a') as output_file:
-                    output_file.write(f"{file_name} {metric_name} {metric_val}")
+                    output_file.write(f"{file_name} {metric_name} {metric_val}\n")
             except ValueError:
                 sys.exit()
             except IOError:
