@@ -28,7 +28,7 @@ def process_file(project_dir, file_name, metric_name):
 if __name__ == "__main__":
     # Ensure enough arguments are passed
     if len(sys.argv) != 4:
-        print("Usage: python process_file.py <dir_path> <file_name> <metric_name>")
+        print("Usage: python process_file.py <project_dir> <file_name> <metric_name>")
         sys.exit(1)
 
     # Get the values from the command line arguments
