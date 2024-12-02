@@ -29,7 +29,6 @@ for item in os.listdir('../projects/'):
             output_file_path = os.path.join(folder_path, 'output.txt')
             open(output_file_path, 'w').close()
 
-
 # Save changes to database and close connection
 conn.commit()
 conn.close()
