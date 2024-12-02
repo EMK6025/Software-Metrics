@@ -23,7 +23,7 @@ for root, _, files in os.walk(dir_path):
         if file.endswith('.java'):
             # Call process_file.py
             subprocess.run(
-                ['python', 'process_file.py', root, file, metric_name],
+                ['python', 'process_file.py', dir, root, file, metric_name],
                 capture_output=True,
                 text=True
             )
