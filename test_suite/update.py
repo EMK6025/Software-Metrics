@@ -12,7 +12,7 @@ insert_cmd = "INSERT INTO projects (project_name, path_to_folder) VALUES (?, ?)"
 check_cmd = "SELECT 1 FROM projects WHERE project_name = ? LIMIT 1"
 
 # Walk through projects/ and add new dirs in
-for root, dirs in os.walk('../projects/'):
+for root, dirs, _ in os.walk('../projects/'):
     for dir in dirs:
         # Get the full file path
         folder_path = os.path.join(root, dir)
