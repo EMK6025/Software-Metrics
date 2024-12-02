@@ -27,12 +27,12 @@ def process_file(project_name, project_dir, file_name, metric_name):
 
 
 if __name__ == "__main__":
-    # Ensure enough arguments are passed
+    # Check arguments
     if len(sys.argv) != 4:
         print("Usage: python process_file.py <project_name> <project_dir> <file_name> <metric_name>")
         sys.exit(1)
 
-    # Get the values from the command line arguments
+    # Get values from command line arguments
     project_name = sys.argv[1]
     project_dir = sys.argv[2]
     file_name = sys.argv[3]
