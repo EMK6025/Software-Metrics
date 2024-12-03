@@ -2,18 +2,18 @@ import os
 import subprocess
 import sys
 
-def process_folder(dir_path, metric_name):
+def process_folder(proj_path, metric_name):
     # Check if directory exists
-    if not os.path.isdir(dir_path):
-        print(f"Directory not found: {dir_path}")
+    if not os.path.isdir(proj_path):
+        print(f"Directory not found: {proj_path}")
         return
-    for root, _, files in os.walk(dir_path):
+    for dir_path, _, files in os.walk(proj_path):
         for file in files:
             # Process only .java files
             if file.endswith('.java'):
                 # Call process_file.py as a subprocess
                 subprocess.run(
-                    ['python', 'process_file.py', dir_path, root, file, metric_name],
+                    ['python', 'process_file.py', proj_path, dir_path, file, metric_name],
                     capture_output=True,
                     text=True
                 )
@@ -25,7 +25,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Get values from command line arguments
-    dir_path = os.path.join('../projects/', sys.argv[1])
+    proj_path = os.path.join('../projects/', sys.argv[1])
     metric_name = sys.argv[2]
 
-    process_folder(dir_path, metric_name)
+    process_folder(proj_path, metric_name)
