@@ -1,9 +1,9 @@
 import os
 import subprocess
 import sys
+import sqlite3
 
 def process_file(project_name, project_dir, file_name, metric_name):
-    project_path = os.path.join('../projects/', project_name)
     dir_path = os.path.join('../projects/', project_dir)
     file_path = os.path.join(dir_path, file_name)
     metric_path = os.path.join('../metrics/', metric_name)
@@ -15,11 +15,11 @@ def process_file(project_name, project_dir, file_name, metric_name):
 
         if result.returncode == 0:
             try:
-                # Write the output into output.txt
-                metric_val = result.stdout.strip()
-                output_file_path = os.path.join(project_path, "output.txt")
-                with open(output_file_path, 'a') as output_file:
-                    output_file.write(f"{file_name} {metric_name} {metric_val}\n")
+                # Write the output into cur table for project
+                val = result.stdout.strip()
+                insert_cmd = "INSERT INTO {proj_name}_cur (metric, file, value) VALUES (?, ?, ?)"
+                sql_data = (metric_name, file_name, val)
+                cursor.execute(insert_cmd, sql_data)
             except ValueError:
                 sys.exit()
             except IOError:
@@ -37,4 +37,11 @@ if __name__ == "__main__":
     project_dir = sys.argv[2]
     file_name = sys.argv[3]
     metric_name = sys.argv[4]
+
+    # Relative file path to the database
+    db_path = '../database.db'
+
+    # Connect/create database
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
     process_file(project_name, project_dir, file_name, metric_name)
