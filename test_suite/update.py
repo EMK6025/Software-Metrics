@@ -15,6 +15,7 @@ timestamp_cmd = "SELECT CURRENT_TIMESTAMP"
 
 for proj_name in os.listdir('../projects/'):
     folder_path = os.path.join('../projects/', proj_name)
+    folder_path = folder_path.replace("\\", "/")
     
     # Check if the item is a directory (not a file)
     if os.path.isdir(folder_path):

@@ -4,10 +4,10 @@ import sys
 import sqlite3
 
 def process_file(project_name, project_dir, file_name, metric_name):
-    dir_path = os.path.join('../projects/', project_dir)
-    file_path = os.path.join(dir_path, file_name)
+    file_path = os.path.join(project_dir, file_name)
+    file_path = file_path.replace("\\", "/")
     metric_path = os.path.join('../metrics/', metric_name)
-
+    metric_path = metric_path.replace("\\", "/")
     # Ensure the metric file exists
     if os.path.exists(metric_path):
         # Run metric
@@ -18,6 +18,7 @@ def process_file(project_name, project_dir, file_name, metric_name):
                 # Write the output into cur table for project
                 val = result.stdout.strip()
                 insert_cmd = f"INSERT INTO {project_name}_cur (metric, file, value) VALUES (?, ?, ?)"
+                print("completed")
                 sql_data = (metric_name, file_name, val)
                 cursor.execute(insert_cmd, sql_data)
             except ValueError:
@@ -28,7 +29,8 @@ def process_file(project_name, project_dir, file_name, metric_name):
 
 if __name__ == "__main__":
     # Check arguments
-    if len(sys.argv) != 4:
+    print("hello")
+    if len(sys.argv) != 5:
         print("Usage: python process_file.py <project_name> <project_dir> <file_name> <metric_name>")
         sys.exit(1)
 

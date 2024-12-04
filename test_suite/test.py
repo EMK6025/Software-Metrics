@@ -9,7 +9,7 @@ def test_folder():
 
     # Do not touch
     dir_path = os.path.join('../projects/', dir_name)
-
+    dir_path = dir_path.replace("\\", "/")
     subprocess.run(
                     ['python', 'process_folder.py', dir_path, metric_name],
                     capture_output=True,
@@ -18,16 +18,17 @@ def test_folder():
 
 def test_file():
     # Fill in these
-    proj = "directory path"
-    dir = "directory name"
-    file = "file name"
-    metric_name = "metric"
+    proj = "single_file"
+    dir = ""
+    file = "Calculator.java"
+    metric_name = "boiler_plate.py"
 
     # Do not touch
-    proj_path = os.path.join('../projects/', proj)
-    dir_path = os.path.join(proj_path, dir)
+    dir_path = os.path.join('../projects/', proj)
+    dir_path = os.path.join(dir_path, dir)
+    dir_path = dir_path.replace("\\", "/")
     subprocess.run(
-                    ['python', 'process_file.py', proj_path, dir_path, file, metric_name],
+                    ['python', 'process_file.py', proj, dir_path, file, metric_name],
                     capture_output=True,
                     text=True
                 )
@@ -39,12 +40,8 @@ def update():
                     text=True
                 )
 
-def display_tables():
-    grab_tables_cmd = """
-        SELECT name 
-        FROM sqlite_master 
-        WHERE type = 'table' AND name != 'sqlite_sequence';
-    """
+def list_all_tables():
+    grab_tables_cmd = "SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'sqlite_sequence'"
     cursor.execute(grab_tables_cmd)
     items = cursor.fetchall()
     print(f"There are {len(items)} many table(s): ")
@@ -52,16 +49,28 @@ def display_tables():
         print(item[0])
 
 def wipe_tables():
-    # Get a list of all tables
-    wipe_cmd = "SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'sqlite_sequence'"
-    cursor.execute(wipe_cmd)
+    # Get list of all tables
+    grab_tables_cmd = "SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'sqlite_sequence'"
+    cursor.execute(grab_tables_cmd)
     tables = cursor.fetchall()
-
+    wipe_cmd = f"DROP TABLE IF EXISTS {table[0]}"
     # Drop each table
     for table in tables:
-        cursor.execute(f"DROP TABLE IF EXISTS {table[0]}")
+        cursor.execute(wipe_cmd)
 
+def display_table():
+    table = "single_file_cur"
+    grab_cmd = f"SELECT * FROM {table}"
+    cursor.execute(grab_cmd)
+    items = cursor.fetchall()
 
+    if not items:
+        print(f"{table} is empty.")
+        return
+    
+    for item in items:
+        print(" ".join(item))
+    
 
 if __name__ == "__main__":
     db_path = '../database.db'
@@ -70,8 +79,8 @@ if __name__ == "__main__":
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     # test_folder()
-    # test_file()
-    display_tables()
+    test_file()
+    # display_table()
 
     # Save changes to database and close connection
     conn.commit()  

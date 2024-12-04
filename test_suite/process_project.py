@@ -7,6 +7,7 @@ import sqlite3
 def process_folder(proj_name, metric_name):
     #path to project
     proj_path = os.path.join('../projects/', proj_name)
+    proj_path = proj_path.replace("\\", "/")
     # Check if directory exists
     if not os.path.isdir(proj_path):
         print(f"Directory not found: {proj_path}")

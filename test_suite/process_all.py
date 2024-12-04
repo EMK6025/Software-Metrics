@@ -4,6 +4,7 @@ import subprocess
 def process_all(proj_path, metric_name):
     for dir in os.listdir('../projects/'):
         dir_path = os.path.join('../projects/', dir)
+        dir_path = dir_path.replace("\\", "/")
         for _, _, metric in os.walk('../metrics/'):
             subprocess.run(
                         ['python', 'process_folder.py', dir_path, metric],
