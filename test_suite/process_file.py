@@ -29,7 +29,6 @@ def process_file(project_name, project_dir, file_name, metric_name):
 
 if __name__ == "__main__":
     # Check arguments
-    print("hello")
     if len(sys.argv) != 5:
         print("Usage: python process_file.py <project_name> <project_dir> <file_name> <metric_name>")
         sys.exit(1)
@@ -47,3 +46,5 @@ if __name__ == "__main__":
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     process_file(project_name, project_dir, file_name, metric_name)
+    conn.commit()  
+    conn.close()
