@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sqlite3
 
 def test_folder():
     # Fill in these
@@ -38,8 +39,40 @@ def update():
                     text=True
                 )
 
+def display_tables():
+    grab_tables_cmd = """
+        SELECT name 
+        FROM sqlite_master 
+        WHERE type = 'table' AND name != 'sqlite_sequence';
+    """
+    cursor.execute(grab_tables_cmd)
+    items = cursor.fetchall()
+    print(f"There are {len(items)} many table(s): ")
+    for item in items:
+        print(item[0])
+
+def wipe_tables():
+    # Get a list of all tables
+    wipe_cmd = "SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'sqlite_sequence'"
+    cursor.execute(wipe_cmd)
+    tables = cursor.fetchall()
+
+    # Drop each table
+    for table in tables:
+        cursor.execute(f"DROP TABLE IF EXISTS {table[0]}")
+
 
 
 if __name__ == "__main__":
-    test_folder()
-    test_file()
+    db_path = '../database.db'
+
+    # Connect/create database
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    # test_folder()
+    # test_file()
+    display_tables()
+
+    # Save changes to database and close connection
+    conn.commit()  
+    conn.close()
