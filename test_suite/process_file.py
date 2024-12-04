@@ -17,7 +17,7 @@ def process_file(project_name, project_dir, file_name, metric_name):
             try:
                 # Write the output into cur table for project
                 val = result.stdout.strip()
-                insert_cmd = "INSERT INTO {proj_name}_cur (metric, file, value) VALUES (?, ?, ?)"
+                insert_cmd = f"INSERT INTO {project_name}_cur (metric, file, value) VALUES (?, ?, ?)"
                 sql_data = (metric_name, file_name, val)
                 cursor.execute(insert_cmd, sql_data)
             except ValueError:
