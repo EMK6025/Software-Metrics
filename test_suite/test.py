@@ -2,19 +2,19 @@ import os
 import subprocess
 import sqlite3
 
-def test_folder():
+def test_project():
     # Fill in these
-    dir_name = "single_file"
+    project_name = "single_file"
     metric_name = "boiler_plate.py"
 
     # Do not touch
-    dir_path = os.path.join('../projects/', dir_name)
-    dir_path = dir_path.replace("\\", "/")
-    subprocess.run(
-                    ['python', 'process_folder.py', dir_path, metric_name],
+    result = subprocess.run(
+                    ['python', 'process_project.py', project_name, metric_name],
                     capture_output=True,
-                    text=True
+                    text=True,
                 )
+    print("Stdout:", result.stdout)
+    print("Stderr:", result.stderr)
 
 def test_file():
     # Fill in these
@@ -27,21 +27,23 @@ def test_file():
     dir_path = os.path.join('../projects/', proj)
     dir_path = os.path.join(dir_path, dir)
     dir_path = dir_path.replace("\\", "/")
-    subprocess.run(
+    result = subprocess.run(
                     ['python', 'process_file.py', proj, dir_path, file, metric_name],
                     capture_output=True,
                     text=True,
-                    cwd='../test_suite/' 
                 )
+    print("Stdout:", result.stdout)
+    print("Stderr:", result.stderr)
 
 def update():
-    subprocess.run(
+    result = subprocess.run(
                     ['python', 'update.py'],
                     capture_output=True,
                     text=True,
                     check=True,
-                    cwd='../test_suite/' 
                 )
+    print("Stdout:", result.stdout)
+    print("Stderr:", result.stderr)
 
 def list_all_tables():
     grab_tables_cmd = "SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'sqlite_sequence'"
@@ -56,9 +58,9 @@ def wipe_tables():
     grab_tables_cmd = "SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'sqlite_sequence'"
     cursor.execute(grab_tables_cmd)
     tables = cursor.fetchall()
-    wipe_cmd = f"DROP TABLE IF EXISTS {table[0]}"
     # Drop each table
     for table in tables:
+        wipe_cmd = f"DROP TABLE IF EXISTS {table[0]}"
         cursor.execute(wipe_cmd)
 
 def display_table():
@@ -81,11 +83,8 @@ if __name__ == "__main__":
     # Connect/create database
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    # test_folder()
-    test_file()
-    # update()
+    test_project()
     display_table()
-
     # Save changes to database and close connection
     conn.commit()  
     conn.close()
