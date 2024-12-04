@@ -4,8 +4,8 @@ import sqlite3
 
 def test_folder():
     # Fill in these
-    dir_name = "sample"
-    metric_name = "sample"
+    dir_name = "single_file"
+    metric_name = "boiler_plate.py"
 
     # Do not touch
     dir_path = os.path.join('../projects/', dir_name)
@@ -30,14 +30,17 @@ def test_file():
     subprocess.run(
                     ['python', 'process_file.py', proj, dir_path, file, metric_name],
                     capture_output=True,
-                    text=True
+                    text=True,
+                    cwd='../test_suite/' 
                 )
 
 def update():
     subprocess.run(
                     ['python', 'update.py'],
                     capture_output=True,
-                    text=True
+                    text=True,
+                    check=True,
+                    cwd='../test_suite/' 
                 )
 
 def list_all_tables():
@@ -80,7 +83,8 @@ if __name__ == "__main__":
     cursor = conn.cursor()
     # test_folder()
     test_file()
-    # display_table()
+    # update()
+    display_table()
 
     # Save changes to database and close connection
     conn.commit()  
