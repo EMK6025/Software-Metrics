@@ -17,12 +17,12 @@ def process_folder(project_name, metric_name):
             # Process only .java files
             if file.endswith('.java'):
                 # Call process_file.py as a subprocess
-                print(proj_name)
+                print(project_name)
                 print(dir_path)
                 print(file)
                 print(metric_name)
                 subprocess.run(
-                    ['python', 'process_file.py', proj_name, dir_path, file, metric_name],
+                    ['python', 'process_file.py', project_name, dir_path, file, metric_name],
                     capture_output=True,
                     text=True
                 )
@@ -35,7 +35,7 @@ def process_folder(project_name, metric_name):
         SET last_timestamp = ?
         WHERE project_name = ?;
     """
-    cursor.execute(update_cmd, (timestamp, proj_name))
+    cursor.execute(update_cmd, (timestamp, project_name))
 
 if __name__ == "__main__":
     # Relative file path to the database
