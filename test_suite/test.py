@@ -64,7 +64,7 @@ def wipe_tables():
         cursor.execute(wipe_cmd)
 
 def display_table():
-    table = "single_file_cur"
+    table = "projects"
     grab_cmd = f"SELECT * FROM {table}"
     cursor.execute(grab_cmd)
     items = cursor.fetchall()
@@ -72,9 +72,9 @@ def display_table():
     if not items:
         print(f"{table} is empty.")
         return
-    
+
     for item in items:
-        print(" ".join(item))
+        print("".join(str(item)))
     
 
 if __name__ == "__main__":
@@ -85,6 +85,8 @@ if __name__ == "__main__":
     cursor = conn.cursor()
     test_project()
     display_table()
+    
+
     # Save changes to database and close connection
     conn.commit()  
     conn.close()

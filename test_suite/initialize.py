@@ -9,7 +9,8 @@ cursor = conn.cursor()
 
 # SQL statement to create a table
 create_projects_table_cmd = """
-    CREATE TABLE IF NOT EXISTS projects (
+    CREATE TABLE IF NOT EXISTS 
+      (
     project_id INTEGER PRIMARY KEY AUTOINCREMENT,
     project_name TEXT NOT NULL,
     last_timestamp TEXT,
