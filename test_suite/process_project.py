@@ -17,10 +17,6 @@ def process_folder(project_name, metric_name):
             # Process only .java files
             if file.endswith('.java'):
                 # Call process_file.py as a subprocess
-                print(project_name)
-                print(dir_path)
-                print(file)
-                print(metric_name)
                 subprocess.run(
                     ['python', 'process_file.py', project_name, dir_path, file, metric_name],
                     capture_output=True,

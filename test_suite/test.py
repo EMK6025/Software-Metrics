@@ -4,7 +4,7 @@ import sqlite3
 
 def test_project():
     # Fill in these
-    project_name = "single_file"
+    project_name = "subdir_multi_file"
     metric_name = "boiler_plate.py"
 
     # Do not touch
@@ -53,18 +53,18 @@ def list_all_tables():
     for item in items:
         print(item[0])
 
-def wipe_tables():
-    # Get list of all tables
+def wipe_tables(target):
+    #target is the name of the database to clear.
     grab_tables_cmd = "SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'sqlite_sequence'"
     cursor.execute(grab_tables_cmd)
     tables = cursor.fetchall()
     # Drop each table
     for table in tables:
-        wipe_cmd = f"DROP TABLE IF EXISTS {table[0]}"
-        cursor.execute(wipe_cmd)
+        if target == table[0] or target == "all":
+            wipe_cmd = f"DROP TABLE IF EXISTS {table[0]}"
+            cursor.execute(wipe_cmd)
 
-def display_table():
-    table = "projects"
+def display_table(table):
     grab_cmd = f"SELECT * FROM {table}"
     cursor.execute(grab_cmd)
     items = cursor.fetchall()
@@ -83,9 +83,8 @@ if __name__ == "__main__":
     # Connect/create database
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    test_project()
-    display_table()
-    
+    list_all_tables()
+    # display_table()
 
     # Save changes to database and close connection
     conn.commit()  
