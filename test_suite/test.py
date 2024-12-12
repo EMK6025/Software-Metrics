@@ -2,11 +2,13 @@ import os
 import subprocess
 import sqlite3
 
-def test_project():
-    # Define the project name and metric to test
-    project_name = "subdir_multi_file"
-    metric_name = "boiler_plate.py"
+def test_project(project_name, metric_name):
+    """
+    Test a project by running a metric on it.
 
+    :param project_name: The name of the project to test.
+    :param metric_name: The name of the metric to run on the project.
+    """
     # Run the process_project.py script as a subprocess and capture its output
     result = subprocess.run(
                     ['python', 'process_project.py', project_name, metric_name],
@@ -17,13 +19,15 @@ def test_project():
     print("Stdout:", result.stdout)
     print("Stderr:", result.stderr)
 
-def test_file():
-    # Define the project, directory, file, and metric to test
-    proj = "single_file"
-    dir = ""
-    file = "Calculator.java"
-    metric_name = "boiler_plate.py"
+def test_file(proj, dir, file, metric_name):
+    """
+    Test a file by running a metric on it.
 
+    :param proj: The name of the project.
+    :param dir: The directory within the project.
+    :param file: The name of the file to test.
+    :param metric_name: The name of the metric to run on the file.
+    """
     # Construct the full directory path
     dir_path = os.path.join('../projects/', proj)
     dir_path = os.path.join(dir_path, dir)
@@ -40,6 +44,9 @@ def test_file():
     print("Stderr:", result.stderr)
 
 def update():
+    """
+    Update the database by running the update.py script.
+    """
     # Run the update.py script as a subprocess and capture its output
     result = subprocess.run(
                     ['python', 'update.py'],
@@ -52,6 +59,9 @@ def update():
     print("Stderr:", result.stderr)
 
 def list_all_tables():
+    """
+    List all tables in the database.
+    """
     # SQL command to fetch all table names in the database
     grab_tables_cmd = "SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'sqlite_sequence'"
     cursor.execute(grab_tables_cmd)
@@ -62,6 +72,11 @@ def list_all_tables():
         print(item[0])
 
 def wipe_tables(target):
+    """
+    Wipe (drop) specified tables from the database.
+
+    :param target: The name of the table to drop or "all" to drop all tables.
+    """
     # SQL command to fetch all table names in the database
     grab_tables_cmd = "SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'sqlite_sequence'"
     cursor.execute(grab_tables_cmd)
@@ -73,6 +88,11 @@ def wipe_tables(target):
             cursor.execute(wipe_cmd)
 
 def display_table(table):
+    """
+    Display all rows from the specified table.
+
+    :param table: The name of the table to display.
+    """
     # SQL command to fetch all rows from the specified table
     grab_cmd = f"SELECT * FROM {table}"
     cursor.execute(grab_cmd)
@@ -93,7 +113,9 @@ if __name__ == "__main__":
     # Connect to the SQLite database
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    
+
+    # Example usage of the functions
+
     # Save changes to the database and close the connection
     conn.commit()
     conn.close()
