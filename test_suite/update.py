@@ -3,14 +3,18 @@ import sqlite3
 import re
 
 def update():
+    # SQL command to insert a new project into the projects table
     insert_cmd = "INSERT INTO projects (project_name, last_timestamp, number_of_entries) VALUES (?, ?, ?)"
+    # SQL command to check if a project already exists in the projects table
     check_cmd = "SELECT 1 FROM projects WHERE project_name = ? LIMIT 1"
+    # SQL command to get the current timestamp
     timestamp_cmd = "SELECT CURRENT_TIMESTAMP"
 
+    # Iterate over all directories in the projects folder
     for proj_name in os.listdir('../projects/'):
         folder_path = os.path.join('../projects/', proj_name)
         folder_path = folder_path.replace("\\", "/")
-        
+
         # Check if the item is a directory (not a file)
         if os.path.isdir(folder_path):
             # Validate table name to avoid SQL injection
@@ -25,7 +29,7 @@ def update():
             if not existing_project:
                 cursor.execute(timestamp_cmd)
                 timestamp = cursor.fetchone()[0]  # Get the timestamp value
-                
+
                 user_data = (proj_name, timestamp, 0)
                 cursor.execute(insert_cmd, user_data)
 
@@ -53,11 +57,13 @@ if __name__ == "__main__":
     # Relative file path to the database
     db_path = '../database.db'
 
-    # Connect/create database
+    # Connect to the SQLite database
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
+    # Call the update function
     update()
-    # Save changes to database and close connection
-    conn.commit()  
+
+    # Save changes to the database and close the connection
+    conn.commit()
     conn.close()

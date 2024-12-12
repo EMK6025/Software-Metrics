@@ -4,18 +4,21 @@ import sys
 import sqlite3
 
 def process_file(project_name, project_dir, file_name, metric_name):
+    # Construct the full path to the file
     file_path = os.path.join(project_dir, file_name)
     file_path = file_path.replace("\\", "/")
+    # Construct the full path to the metric script
     metric_path = os.path.join('../metrics/', metric_name)
     metric_path = metric_path.replace("\\", "/")
+
     # Ensure the metric file exists
     if os.path.exists(metric_path):
-        # Run metric
+        # Run the metric script as a subprocess
         result = subprocess.run(['python', metric_path, file_path], capture_output=True, text=True)
 
         if result.returncode == 0:
             try:
-                # Get the output value
+                # Get the output value from the metric script
                 val = result.stdout.strip()
                 # Check if the entry already exists in the table
                 select_cmd = f"SELECT COUNT(*) FROM {project_name}_cur WHERE metric = ? AND file = ?"
@@ -49,9 +52,13 @@ if __name__ == "__main__":
     # Relative file path to the database
     db_path = '../database.db'
 
-    # Connect/create database
+    # Connect to the SQLite database
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
+
+    # Call the process_file function
     process_file(project_name, project_dir, file_name, metric_name)
-    conn.commit()  
+
+    # Save changes to the database and close the connection
+    conn.commit()
     conn.close()

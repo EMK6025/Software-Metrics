@@ -15,7 +15,6 @@ def metric(file_path):
     except IOError as e:
         return "MetricIOError"
 
-
 if __name__ == "__main__":
     # Ensure enough arguments are passed
     if len(sys.argv) != 2:

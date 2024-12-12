@@ -3,11 +3,11 @@ import sqlite3
 # Relative file path to the database
 db_path = '../database.db'
 
-# Connect/create database
+# Connect to the SQLite database
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-# SQL statement to create a table
+# SQL statement to create a table for projects
 create_projects_table_cmd = """
     CREATE TABLE IF NOT EXISTS projects
       (
@@ -18,9 +18,9 @@ create_projects_table_cmd = """
 )
 """
 
-# Execute the query
+# Execute the query to create the projects table
 cursor.execute(create_projects_table_cmd)
 
-# Save changes to database and close connection
-conn.commit()  
+# Save changes to the database and close the connection
+conn.commit()
 conn.close()
