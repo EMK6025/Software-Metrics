@@ -1,2 +1,59 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node.js
+node_modules/
+dist/
+.vite/
+
+# Electron
 *.db
+*.asar
+out/
+release/
+*.native.*  # Native module builds
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Vite / Webpack Cache
+.cache/
+.vscode/
+.idea/
+.vite/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env  # Environment variables
+
+# Virtual Environments
+venv/
+env/
+.venv/
+
+# SQL & SQLite
+*.db
+*.sqlite
+
+# Other
+*.swp
+*.swo
+*.bak
+*.tmp
+*.temp
+*.pid
+
+# Build/Generated Files
+*.log
+*.bak
+!log keep artifacts alone. 
+``
+
 ethan_test.py
