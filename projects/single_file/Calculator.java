@@ -1,3 +1,4 @@
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -266,10 +267,10 @@ public class Calculator implements ActionListener {
                 }
             }
             case "R2" -> {
-                inputBox.setText(String.format("%.2f", Double.parseDouble(inputBox.getText())));
+                inputBox.setText(String.format("%.2f", Double.valueOf(inputBox.getText())));
             }
             case "R0" -> {
-                inputBox.setText(String.format("%.0f", Double.parseDouble(inputBox.getText())));
+                inputBox.setText(String.format("%.0f", Double.valueOf(inputBox.getText())));
             }
             case null, default -> {
                 if (starting) {
