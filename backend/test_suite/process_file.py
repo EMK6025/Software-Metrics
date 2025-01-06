@@ -6,10 +6,11 @@ import sqlite3
 def process_file(project_name, project_dir, file_name, metric_name):
     # Construct the full path to the file
     file_path = os.path.join(project_dir, file_name)
-    file_path = file_path.replace("\\", "/")
+    file_path = os.path.normpath(file_path)
+
     # Construct the full path to the metric script
     metric_path = os.path.join('../metrics/', metric_name)
-    metric_path = metric_path.replace("\\", "/")
+    metric_path = os.path.normpath(metric_path)
 
     # Ensure the metric file exists
     if os.path.exists(metric_path):
