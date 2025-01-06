@@ -13,7 +13,7 @@ def update():
     # Iterate over all directories in the projects folder
     for proj_name in os.listdir('../../projects/'):
         folder_path = os.path.join('../../projects/', proj_name)
-        folder_path = folder_path.replace("\\", "/")
+        folder_path = os.path.normpath(folder_path)
 
         # Check if the item is a directory (not a file)
         if os.path.isdir(folder_path):
