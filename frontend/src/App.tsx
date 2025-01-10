@@ -1,10 +1,9 @@
 import './App.css';
-import InputField from './components/InputField';
+import ListGroup from './components/ListGroup';
 
 function App(){
-  return <div className="App">
-    <span className="heading">Software Metrics</span>
-    <InputField />
+  return <div>
+    <ListGroup />
   </div>
 };
 

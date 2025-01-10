@@ -1,11 +1,5 @@
-import React from 'react'
-
-const InputField = () => {
-  return (
-    <div>
-      Input
-    </div>
-  )
+function InputField(){
+  return <h1>Hello World</h1>;
 }
 
 export default InputField
