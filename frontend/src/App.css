@@ -4,11 +4,6 @@
   flex-direction: column; /* Ensures children stack vertically */
 }
 
-
-.heading {
-  font-size: 40px;
-  margin: 0;
-  color: black;
-  z-index: 1;
-  text-align: center;
+.sidebar {
+  background-color: #333;
 }
