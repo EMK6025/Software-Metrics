@@ -1,4 +1,4 @@
-.container{
+.container {
   display: flex;
   flex-direction: column;
   width: 200px;
@@ -10,7 +10,7 @@
   transition: width 0.3s ease;
 }
 
-.container.closed{
+.container--closed {
   width: 0px;
 }
 
@@ -36,7 +36,7 @@
   transition: transform 0.3s ease, opacity .3s ease;
 }
 
-.title.closed {
+.title--closed {
   transform: translateX(-100%);
   opacity: 0;
 }
@@ -45,7 +45,7 @@
   transition: transform 0.3s ease, opacity .3s ease;
 }
 
-.content.closed {
+.content--closed {
   transform: translateX(-100%);
   opacity: 0;
 }

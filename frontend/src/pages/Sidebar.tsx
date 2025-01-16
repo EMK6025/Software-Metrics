@@ -1,23 +1,21 @@
 import "../styles/Sidebar.css";
 import { Link } from "react-router-dom";
 import Hamburger from "hamburger-react";
+import { useSidebar } from "../context/SidebarProvider";
 
-interface SidebarProps {
-  isOpened: boolean;
-  setIsOpened: React.Dispatch<React.SetStateAction<boolean>>;
-}
+function Sidebar() {
+  const { isOpened, setIsOpened } = useSidebar();
 
-function Sidebar({ isOpened, setIsOpened }: SidebarProps) {
   return (
-    <div className={`container ${isOpened ? "" : "closed"}`}>
+    <div className={`container ${isOpened ? "" : "container--closed"}`}>
       <div className="header">
         <div className="icon">
           <Hamburger toggled={isOpened} toggle={setIsOpened} color="#fff" />
         </div>
-        <h2 className={`title ${isOpened ? "" : "closed"}`}>Sidebar Title</h2>
+        <h2 className={`title ${isOpened ? "" : "title--closed"}`}>Sidebar</h2>
       </div>
 
-      <div className={`content ${isOpened ? "" : "closed"}`}>
+      <div className={`content ${isOpened ? "" : "content--closed"}`}>
         <ul>
           <li>
             <Link to="/">Home</Link>
