@@ -1,8 +1,8 @@
 function HomePage() {
   return (
-    <>
-      <p> This is the Home Page</p>
-    </>
+    <div className="page">
+      <h1 className="page-title">Home Page</h1>
+    </div>
   );
 }
 

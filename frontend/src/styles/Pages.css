@@ -1,0 +1,10 @@
+
+
+  .page-title{
+    margin: 20px 0px 0px 20px;
+    transition: margin .3s ease;
+  }
+
+  .sidebar-closed .page-title{
+    margin: 20px 0px 0px 80px;
+  }

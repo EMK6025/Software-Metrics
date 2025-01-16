@@ -1,8 +1,8 @@
 function GraphsPage() {
   return (
-    <>
-      <p> This is the Graphs Page</p>
-    </>
+    <div className="page">
+      <h1 className="page-title">Graphs Page</h1>
+    </div>
   );
 }
 

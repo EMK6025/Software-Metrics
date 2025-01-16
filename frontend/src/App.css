@@ -1,9 +1,6 @@
 .App {
   display: flex;
-  height: 100vh;          /* Full viewport height */
-  flex-direction: column; /* Ensures children stack vertically */
-}
-
-.sidebar {
-  background-color: #333;
+  height: 100%;
+  width: 100%;
+  background-color: lightblue;
 }

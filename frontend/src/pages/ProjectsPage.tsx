@@ -1,8 +1,10 @@
+import "../styles/Pages.css";
+
 function ProjectsPage() {
   return (
-    <>
-      <p> This is the Projects Page</p>
-    </>
+    <div className="page">
+      <h1 className="page-title">Projects Page</h1>
+    </div>
   );
 }
 
