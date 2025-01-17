@@ -11,8 +11,8 @@ def update():
     timestamp_cmd = "SELECT CURRENT_TIMESTAMP"
 
     # Iterate over all directories in the projects folder
-    for proj_name in os.listdir('../../projects/'):
-        folder_path = os.path.join('../../projects/', proj_name)
+    for proj_name in os.listdir('../projects/'):
+        folder_path = os.path.join('../projects/', proj_name)
         folder_path = os.path.normpath(folder_path)
 
         # Check if the item is a directory (not a file)

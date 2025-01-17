@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron/main';
 import path from 'node:path';
 import url from 'node:url';
+import { exec } from 'child_process';
 
 // __dirname is not automatically available with ES modules
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
@@ -28,6 +29,29 @@ function createWindow() {
   });
 }
 
+function handlePythonExecution() {
+  ipcMain.on("run-python-script", (event, arg) => {
+    console.log(`Executing Python script with argument: ${arg}`);
+    const scriptPath = path.join(__dirname, 'path/to/your/script.py'); // Adjust script path as needed
+
+    exec(`python ${scriptPath} ${arg}`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error.message}`);
+        event.reply("python-script-response", { error: error.message });
+        return;
+      }
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        event.reply("python-script-response", { stderr });
+        return;
+      }
+      console.log(`Python script output: ${stdout}`);
+      event.reply("python-script-response", { result: stdout });
+    });
+  });
+}
+
+
 app.whenReady().then(() => {
   createWindow();
 
@@ -45,3 +69,6 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
+const { ipcMain } = require("electron");
+const { exec } = require("child_process");
