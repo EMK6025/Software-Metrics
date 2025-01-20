@@ -20,9 +20,9 @@ function GraphsPage() {
 
   // Fetch data with useEffect hook when the component is mounted
   useEffect(() => {
-    // Use Electron context bridge to fetch data with preload.js script
-    window.electron
-      .fetchData() // Fetch data from database
+    // Fetch data from the Flask backend
+    fetch("http://localhost:5000/api/projects")
+      .then((response) => response.json())
       .then((data: Project[]) => {
         // Update the projects state with the data
         setProjects(data);
