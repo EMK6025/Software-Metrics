@@ -11,6 +11,7 @@ def get_db_connection():
     return conn
 
 @app.route('/api/projects', methods=['GET'])
+
 def get_projects():
     conn = get_db_connection()
     projects = conn.execute('SELECT * FROM projects').fetchall()

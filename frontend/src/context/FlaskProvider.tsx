@@ -57,7 +57,7 @@ export function FlaskProvider({ children }: FlaskProviderProps) {
 }
 
 // Define custom hook to use the projects context
-export const useProjects = (): FlaskContextType => {
+export const useFlask = (): FlaskContextType => {
   // Use useContext hook to get the current value of the projects context
   const context = useContext(FlaskContext);
 

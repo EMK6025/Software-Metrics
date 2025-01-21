@@ -1,37 +1,22 @@
-import { useEffect, useState } from "react";
 import { useSidebar } from "../context/SidebarProvider";
+import { useFlask } from "../context/FlaskProvider";
 import "../styles/Pages.css";
 import "bootstrap/dist/css/bootstrap.css";
-
-// Define the structure of a Project object
-interface Project {
-  project_id: number; // Unique identifier for the project
-  project_name: string; // Name of the project
-  last_timestamp: string; // Last updated timestamp for the project
-  number_of_entries: number; // Number of entries associated with the project
-}
 
 function GraphsPage() {
   // Access the sidebar state using SidebarProvider hook
   const { isOpened } = useSidebar();
 
-  // Hold projects list from database using useState
-  const [projects, setProjects] = useState<Project[]>([]);
+  // Access the projects state using ProjectsProvider hook
+  const { projects, loading, error } = useFlask();
 
-  // Fetch data with useEffect hook when the component is mounted
-  useEffect(() => {
-    // Fetch data from the Flask backend
-    fetch("http://localhost:5000/api/projects")
-      .then((response) => response.json())
-      .then((data: Project[]) => {
-        // Update the projects state with the data
-        setProjects(data);
-      })
-      .catch((error: any) => {
-        // Log any errors that occur during the fetch
-        console.error("Failed to fetch data:", error);
-      });
-  }, []); // Empty dependency array ensures this runs only once when the component mounts
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="page">
@@ -51,7 +36,6 @@ function GraphsPage() {
             </tr>
           </thead>
           <tbody>
-            {/* Iterate over the projects array and render a table row for each project */}
             {projects.map((project) => (
               <tr key={project.project_id}>
                 <td>{project.project_id}</td>

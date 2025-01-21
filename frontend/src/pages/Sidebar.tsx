@@ -12,7 +12,7 @@ function Sidebar() {
         <div className="icon">
           <Hamburger toggled={isOpened} toggle={setIsOpened} color="#fff" />
         </div>
-        <h2 className={`title ${isOpened ? "" : "title--closed"}`}>Sidebar</h2>
+        <h2 className={`title ${isOpened ? "" : "title--closed"}`}>Menu</h2>
       </div>
 
       <div className={`content ${isOpened ? "" : "content--closed"}`}>
@@ -27,7 +27,7 @@ function Sidebar() {
             <Link to="/graphs">Graphs</Link>
           </li>
           <li>
-            <Link to="/contacts">Contact</Link>
+            <Link to="/about">About</Link>
           </li>
         </ul>
       </div>

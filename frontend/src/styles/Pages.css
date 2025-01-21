@@ -1,8 +1,47 @@
-  .page-title{
+  h1 {
+    font-size: 40px;
+  }
+
+  h2 {
+    font-size: 32px;
+  }
+
+  h3 {
+    font-size: 24px;
+  }
+
+  p {
+    font-size: 16px;
+  }
+  
+  .page {
+    margin-left: 200px;
+    min-height: 100%;
+    width: 100%-200px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    transition: margin .3s ease;
+  }
+  
+  .page--sidebar-closed {
+    margin-left: 0px;
+    transition: margin .3s ease;
+  }
+
+  .page-title {
     margin: 20px 0px 0px 20px;
     transition: margin .3s ease;
   }
 
-  .page-title--sidebar-closed{
-    margin: 20px 0px 0px 80px;
+  .page-title--sidebar-closed {
+    margin-left: 80px;
+  }
+
+  .readme {
+    margin: 20px 20px 0px 20px;
+    border: 2px solid black;
+    max-width: 750px;
+    transition: margin .3s ease;
+    padding: 10px;
   }
