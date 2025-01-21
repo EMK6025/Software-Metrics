@@ -18,5 +18,11 @@ def get_projects():
     conn.close()
     return jsonify([dict(project) for project in projects])
 
+def get_project_entries(proj):
+    conn = get_db_connection()
+    entries = conn.execute(f'SELECT * FROM {proj}').fetchall()
+    conn.close()
+    return jsonify([dict(entry) for entry in entries])
+
 if __name__ == '__main__':
     app.run(debug=True)
