@@ -1,10 +1,10 @@
 .container {
+  position: fixed;
   display: flex;
   flex-direction: column;
   width: 200px;
   min-height: 100%;
   margin: 0px;
-  position: fixed;
   padding: 0px;
   color: #fff;
   background-color: #333;
@@ -19,7 +19,6 @@
   background-color: #333;;
   margin: 10px;
   padding: 5px;
-  
   border-radius: 30px;
 }
 
@@ -48,6 +47,7 @@
 
 .content--closed {
   transform: translateX(-100%);
+  overflow: hidden;
   opacity: 0;
 }
 
