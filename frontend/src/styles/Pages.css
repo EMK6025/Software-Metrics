@@ -39,7 +39,7 @@
   }
 
   .readme {
-    margin: 20px 20px 0px 20px;
+    margin: 20px;
     border: 2px solid black;
     max-width: 750px;
     transition: margin .3s ease;
