@@ -56,4 +56,6 @@ env/
 !log keep artifacts alone. 
 ``
 
+# Personal
 ethan_test.py
+keys.txt
