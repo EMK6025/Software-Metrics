@@ -35,18 +35,23 @@ export function FlaskProvider({ children }: FlaskProviderProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch data from Flask
-    fetch("http://localhost:5000/api/projects")
-      .then((response) => response.json())
-      .then((data: Project[]) => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/projects");
+        if (!response.ok) {
+          throw new Error("Failed to fetch projects");
+        }
+        const data: Project[] = await response.json();
         setProjects(data);
         setLoading(false);
-      })
-      .catch((error: any) => {
+      } catch (error: any) {
         setError(error.message);
         setLoading(false);
-      });
-  }, []); // Empty dependency array ensures this runs only once when the component mounts
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   // Provide the projects state and updater function to child components
   return (
@@ -61,9 +66,9 @@ export const useFlask = (): FlaskContextType => {
   // Use useContext hook to get the current value of the projects context
   const context = useContext(FlaskContext);
 
-  // throw an error if the hook is used within a FlaskProvider
+  // throw an error if the hook is used outside of a FlaskProvider
   if (!context) {
-    throw new Error("useProjects must be used within a FlaskProvider");
+    throw new Error("useFlask must be used within a FlaskProvider");
   }
 
   // Return the context value
