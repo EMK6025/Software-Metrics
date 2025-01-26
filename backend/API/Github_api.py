@@ -48,6 +48,7 @@ def grab_commits(author, repo_name, cut_off_date): # 2D Array of Commits: parses
     for commit in repo.get_commits():
         commit_date = commit.commit.author.date.date() 
         if cut_off_date > commit_date: # no (more) new commits
+            g.close()
             return selected_commit_arrays
 
         if cur_date == commit_date: # more commits on the same calendar date
@@ -56,8 +57,13 @@ def grab_commits(author, repo_name, cut_off_date): # 2D Array of Commits: parses
             cur_date = commit_date
             selected_commit_arrays.append(selected_commits)
             selected_commits = [commit]
-
     g.close()
+
+def parse_files(selected_commit_arrays): # TO DO
+    target_file_extension = {".java", ".css"}
+    for arr in selected_commit_arrays:
+        for commit in arr:
+            x = [file.filename for file in commit.files if os.path.splitext(file.filename)[1] in target_file_extension]
 
 if __name__ == "__main__":
     date = "2025-01-01 00:00:00"
