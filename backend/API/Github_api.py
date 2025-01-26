@@ -19,22 +19,17 @@ def update_required(author, repo_name, cut_off_date):
     repo = g.get_repo(f"{author}/{repo_name}")
 
     cut_off_date = cut_off_date.replace(tzinfo=timezone.utc)
-    last_commit_date = repo.get_commits()[0].commit.author.date.replace(tzinfo=timezone.utc)
 
-    if cut_off_date > last_commit_date: # no new commits
-        return False 
+    cur_date = repo.get_commits()[0].commit.author.date # Grab time of most recent commit
+    if cut_off_date > cur_date: # No (more) new commits
+        g.close()
+        return False
     
-    # Iterate through commits
-    for commit in repo.get_commits():
-        print(commit.commit.author.date)
-        print(commit.commit.message)
-        print("Modified Files: ")
-        for file in commit.files:
-            print(file.filename)
-        print()
-
-    # Close connection
     g.close()
+    return True
 
 if __name__ == "__main__":
-    update_required("EMK6025", "Software-Metrics", datetime.now())
+    date = "2025-01-01 00:00:00"
+    cut_off_date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+
+    update_required("EMK6025", "Software-Metrics", cut_off_date)
