@@ -1,6 +1,7 @@
 from github import Github, Auth
 import os
 from datetime import datetime, timezone
+import base64
 
 def update_required(author, repo_name, cut_off_date): # Boolean: whether or not an update is required
     # Grabbing file path to keys.txt
@@ -28,7 +29,7 @@ def update_required(author, repo_name, cut_off_date): # Boolean: whether or not 
     g.close()
     return True
 
-def grab_commits(author, repo_name, cut_off_date): # 2D Array of Commits: parses for new commits
+def grab_commits(author, repo_name, cut_off_date): # Commit[]: parses for new commits 
     # Connecting to repo boilerplate for Github API
     script_dir = os.path.dirname(os.path.abspath(__file__))
     keys_path = os.path.join(script_dir, "keys.txt")
@@ -36,12 +37,11 @@ def grab_commits(author, repo_name, cut_off_date): # 2D Array of Commits: parses
         key = file.readline().strip()
     auth = Auth.Token(key)
     g = Github(auth=auth)
-    repo = g.get_repo(f"{author}/{repo_name}")\
+    repo = g.get_repo(f"{author}/{repo_name}")
     
     # Parse for new commits, sorted by dates
     cut_off_date = cut_off_date.date()
     cur_date = repo.get_commits()[0].commit.author.date.date()
-    selected_commit_arrays = []
     selected_commits = []
 
     # Iterate through commits
@@ -49,24 +49,49 @@ def grab_commits(author, repo_name, cut_off_date): # 2D Array of Commits: parses
         commit_date = commit.commit.author.date.date() 
         if cut_off_date > commit_date: # no (more) new commits
             g.close()
-            return selected_commit_arrays
+            return selected_commits
 
-        if cur_date == commit_date: # more commits on the same calendar date
-            selected_commits.append(commit)
-        else:
+        # only need latest commit for each calendar date
+        if cur_date != commit_date: # commit is on a different date, and also needs to be processed
             cur_date = commit_date
-            selected_commit_arrays.append(selected_commits)
-            selected_commits = [commit]
+            selected_commits.append(commit)
     g.close()
 
-def parse_files(selected_commit_arrays): # TO DO
+def parse_files(author, repo_name, commits): # ContentFile[][]: files to run, organized by date 
+    #create interface to add date onto ContentFile arrays
+
+    # Connecting to repo boilerplate for Github API
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    keys_path = os.path.join(script_dir, "keys.txt")
+    with open(keys_path, "r") as file:
+        key = file.readline().strip()
+    auth = Auth.Token(key)
+    g = Github(auth=auth)
+    repo = g.get_repo(f"{author}/{repo_name}")
     target_file_extension = {".java", ".css"}
-    for arr in selected_commit_arrays:
-        for commit in arr:
-            x = [file.filename for file in commit.files if os.path.splitext(file.filename)[1] in target_file_extension]
+    files = []
+    for commit in commits:
+        files_items = []
+        for file in commit.files:
+            if os.path.splitext(file.filename)[1] in target_file_extension:
+                if file.status != "removed": # Only attempt to get contents if the file was not deleted
+                    files_items.apphend(repo.get_contents(file.filename, ref=commit.sha))
+                #     file_content = repo.get_contents(file.filename, ref=commit.sha)
+                #     decoded_content = base64.b64decode(file_content.content).decode('utf-8')
+
+                #     print(decoded_content)
+                # else:
+                #     print(f"File {file.filename} was deleted in commit {commit.sha}.")
+                # print("-----------------")
+        files.apphend(files_items)
+    return files
+
 
 if __name__ == "__main__":
-    date = "2025-01-01 00:00:00"
-    cut_off_date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+    author = "EMK6025"
+    repo = "Software-Metrics"
+    cut_off_date = datetime.strptime("2025-01-23 00:00:00", "%Y-%m-%d %H:%M:%S")
 
-    update_required("EMK6025", "Software-Metrics", cut_off_date)
+    if update_required(author, repo, cut_off_date):
+        commits = grab_commits(author, repo, cut_off_date)
+        parse_files(author, repo, commits)
