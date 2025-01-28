@@ -3,6 +3,8 @@ import subprocess
 import sys
 import sqlite3
 
+# NO LONGER USED - OUTDATED PROGRAM 
+
 def process_folder(project_name, metric_name):
     # Construct the full path to the project directory
     project_path = os.path.join('../projects/', project_name)

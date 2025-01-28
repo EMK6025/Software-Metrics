@@ -1,6 +1,6 @@
 import sys
 
-def metric(file_path):
+def main(file_path):
     count = 0
     # Open the file in read mode
     try:

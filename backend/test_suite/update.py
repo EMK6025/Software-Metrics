@@ -2,6 +2,8 @@ import os
 import sqlite3
 import re
 
+# NO LONGER USED - OUTDATED PROGRAM 
+
 def update():
     # SQL command to insert a new project into the projects table
     insert_cmd = "INSERT INTO projects (project_name, last_timestamp, number_of_entries) VALUES (?, ?, ?)"

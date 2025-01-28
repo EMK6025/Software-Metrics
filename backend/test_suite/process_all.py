@@ -1,7 +1,9 @@
 import os
 import subprocess
 
-def process_all(proj_path, metric_name):
+# NO LONGER USED - OUTDATED PROGRAM 
+
+def process_all(files):
     # Iterate over all directories in the projects folder
     for dir in os.listdir('../projects/'):
         dir_path = os.path.join('../projects/', dir)
