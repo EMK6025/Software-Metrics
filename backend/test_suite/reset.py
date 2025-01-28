@@ -19,6 +19,7 @@ create_projects_table_cmd = """
 """
 
 # Execute the query to create the projects table
+cursor.execute("DROP TABLE projects")
 cursor.execute(create_projects_table_cmd)
 
 # Save changes to the database and close the connection
