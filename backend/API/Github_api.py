@@ -1,7 +1,6 @@
 from github import Github, Auth
 import os
 from datetime import datetime, timezone
-import base64
 
 def update_required(author, repo_name, cut_off_date): # Boolean: whether or not an update is required
     # Grabbing file path to keys.txt
@@ -57,9 +56,8 @@ def grab_commits(author, repo_name, cut_off_date): # Commit[]: parses for new co
 
     g.close()
 
-def parse_files(author, repo_name, commits): # ContentFile[][]: files to run, organized by date 
-    #create interface to add date onto ContentFile arrays
-
+def parse_files(author, repo_name, commits): # ContentFile[]: files to run, organized by date 
+    # First item in each is the date of the files, with the following items being the ContentFiles
     # Connecting to repo boilerplate for Github API
     script_dir = os.path.dirname(os.path.abspath(__file__))
     keys_path = os.path.join(script_dir, "keys.txt")
@@ -70,20 +68,15 @@ def parse_files(author, repo_name, commits): # ContentFile[][]: files to run, or
     repo = g.get_repo(f"{author}/{repo_name}")
     target_file_extension = {".java", ".css"}
     files = []
+
     for commit in commits:
         files_items = []
         for file in commit.files:
             if os.path.splitext(file.filename)[1] in target_file_extension:
                 if file.status != "removed": # Only attempt to get contents if the file was not deleted
                     files_items.apphend(repo.get_contents(file.filename, ref=commit.sha))
-                #     file_content = repo.get_contents(file.filename, ref=commit.sha)
                 #     decoded_content = base64.b64decode(file_content.content).decode('utf-8')
-
-                #     print(decoded_content)
-                # else:
-                #     print(f"File {file.filename} was deleted in commit {commit.sha}.")
-                # print("-----------------")
-        files.apphend(files_items)
+        files.apphend([commit.commit.author.date.date(), files_items])
     return files
 
 
