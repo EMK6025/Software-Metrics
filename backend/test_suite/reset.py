@@ -24,7 +24,9 @@ if __name__ == "__main__":
         (
         author TEXT NOT NULL,
         project TEXT NOT NULL,
-        file_name TEXT NOT NULL,
+        file TEXT NOT NULL,
+        metric TEXT NOT NULL,
+        value
         last_update TEXT,
         number_of_entries INTEGER
         )
