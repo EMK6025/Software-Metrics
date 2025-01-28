@@ -26,9 +26,7 @@ if __name__ == "__main__":
         project TEXT NOT NULL,
         file TEXT NOT NULL,
         metric TEXT NOT NULL,
-        value
-        last_update TEXT,
-        number_of_entries INTEGER
+        value INTEGER NOT NULL
         )
       """
 
