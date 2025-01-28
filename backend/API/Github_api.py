@@ -41,20 +41,21 @@ def grab_commits(author, repo_name, cut_off_date): # Commit[]: parses for new co
     
     # Parse for new commits, sorted by dates
     cut_off_date = cut_off_date.date()
-    cur_date = repo.get_commits()[0].commit.author.date.date()
-    selected_commits = []
+    commit_date = repo.get_commits()[0].commit.author.date.date()
+    selected_commits = [repo.get_commits()[0]]
 
     # Iterate through commits
     for commit in repo.get_commits():
-        commit_date = commit.commit.author.date.date() 
+        # only need latest commit for each calendar date
+        if commit_date != commit.commit.author.date.date():  
+            # commit is on a different date, and also needs to be processed
+            commit_date = commit.commit.author.date.date()
+            selected_commits.append(commit)
+
         if cut_off_date > commit_date: # no (more) new commits
             g.close()
             return selected_commits
 
-        # only need latest commit for each calendar date
-        if cur_date != commit_date: # commit is on a different date, and also needs to be processed
-            cur_date = commit_date
-            selected_commits.append(commit)
     g.close()
 
 def parse_files(author, repo_name, commits): # ContentFile[][]: files to run, organized by date 
