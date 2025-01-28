@@ -46,15 +46,14 @@ def grab_commits(author, repo_name, cut_off_date): # Commit[]: parses for new co
 
     # Iterate through commits
     for commit in repo.get_commits():
+        if cut_off_date > commit_date: # no (more) new commits
+            g.close()
+            return selected_commits
         # only need latest commit for each calendar date
         if commit_date != commit.commit.author.date.date():  
             # commit is on a different date, and also needs to be processed
             commit_date = commit.commit.author.date.date()
             selected_commits.append(commit)
-
-        if cut_off_date > commit_date: # no (more) new commits
-            g.close()
-            return selected_commits
 
     g.close()
 
