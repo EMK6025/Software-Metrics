@@ -26,10 +26,10 @@ if __name__ == "__main__":
         project TEXT NOT NULL,
         file TEXT NOT NULL,
         metric TEXT NOT NULL,
-        value INTEGER NOT NULL
+        value INTEGER NOT NULL, 
+        date TEXT NOT NULL
         )
       """
-
     # Execute the query to create the projects table
     cursor.execute("DROP TABLE projects")
     cursor.execute(create_projects_table_cmd)
