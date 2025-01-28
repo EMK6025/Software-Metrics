@@ -22,8 +22,8 @@ if __name__ == "__main__":
     create_files_table_cmd = """
       CREATE TABLE IF NOT EXISTS files
         (
-        author TEXT NOT NULL,
-        project TEXT NOT NULL,
+        project_id INTEGER NOT NULL,
+        FOREIGN KEY (project_id) REFERENCES projects(project_id),
         file TEXT NOT NULL,
         metric TEXT NOT NULL,
         value INTEGER NOT NULL, 

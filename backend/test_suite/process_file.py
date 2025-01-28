@@ -3,7 +3,7 @@ import importlib.util
 import sys
 import sqlite3
 
-def process_file(author, project, file, date): 
+def process_file(project_id, file, date): 
     metrics_folder = "../metrics"
     db_path = '../database.db'
 
@@ -16,8 +16,8 @@ def process_file(author, project, file, date):
         result = module.metric(file)
         try:
             # Check if the entry already exists in the table
-            select_cmd = f"SELECT COUNT(*) FROM files WHERE author = ? AND project = ? AND file = ? AND metric = ? AND date = ?"
-            cursor.execute(select_cmd, (author, project, file, module))
+            select_cmd = f"SELECT COUNT(*) FROM files WHERE project_id = ? AND file = ? AND metric = ? AND date = ?"
+            cursor.execute(select_cmd, (project_id, file, module))
             count = cursor.fetchone()[0]
             if count > 0:
                 # add customError ?
@@ -25,7 +25,7 @@ def process_file(author, project, file, date):
             else:
                 # Entry does not exist, then insert a new entry
                 insert_cmd = f"INSERT INTO files (author, project, file, metric, value, date) VALUES (?, ?, ?, ?, ?, ?)"
-                cursor.execute(insert_cmd, (author, project, file, module, result, date))
+                cursor.execute(insert_cmd, (project_id, file, module, result, date))
         except (ValueError, IOError) as e:
             print(f"Error: {e}")
             sys.exit()
