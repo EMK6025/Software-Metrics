@@ -3,8 +3,7 @@ import importlib.util
 import sqlite3
 import base64
 
-def main(project_id, files):
-    date = files[0]
+def main(project_id, commits):
 
     # Connect to the SQLite database using a context manager
     db_path = '../database.db'
@@ -22,24 +21,27 @@ def main(project_id, files):
             spec.loader.exec_module(metric)
 
             # Run metric on each file and insert result into files table
-            for file in files[1:]:
-                decoded_file = base64.b64decode(file.content).decode('utf-8')
-                result = metric.main(decoded_file)
+            for files in commits:
+                date = files[0]
+                for file in files[1:]:
+                    # cache decoded result first probably, then run metrics 
+                    decoded_file = base64.b64decode(file.content).decode('utf-8')
+                    result = metric.main(decoded_file)
 
-                try:
-                    # Check if the entry already exists in the table
-                    cursor.execute(select_cmd, (project_id, file, metric_name, date))
-                    count = cursor.fetchone()[0]
-                    if count > 0:
-                        print("File already exists in the table, skipping insertion.")
-                    else:
-                        # Entry does not exist, insert a new entry
-                        cursor.execute(insert_cmd, (project_id, file, metric_name, result, date))
-                except sqlite3.Error as e:
-                    print(f"SQLite error: {e}")
-                    continue
-                except (ValueError, IOError) as e:
-                    print(f"Value/IOError: {e}")
-                    continue
+                    try:
+                        # Check if the entry already exists in the table
+                        cursor.execute(select_cmd, (project_id, file, metric_name, date))
+                        count = cursor.fetchone()[0]
+                        if count > 0:
+                            print("File already exists in the table, skipping insertion.")
+                        else:
+                            # Entry does not exist, insert a new entry
+                            cursor.execute(insert_cmd, (project_id, file, metric_name, result, date))
+                    except sqlite3.Error as e:
+                        print(f"SQLite error: {e}")
+                        continue
+                    except (ValueError, IOError) as e:
+                        print(f"Value/IOError: {e}")
+                        continue
 
 

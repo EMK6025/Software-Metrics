@@ -28,8 +28,9 @@ def update_required(author, repo_name, cut_off_date): # Boolean: whether or not 
     g.close()
     return True
 
-def grab_commits(author, repo_name, cut_off_date): # Commit[]: parses for new commits 
+def grab_commits(author, repo_name, cut_off_date): # Commit[]: parses for new commits #FIX - NEED TO PARSE FOR ALL JAVA PROGRAMS
     # Connecting to repo boilerplate for Github API
+    
     script_dir = os.path.dirname(os.path.abspath(__file__))
     keys_path = os.path.join(script_dir, "keys.txt")
     with open(keys_path, "r") as file:
@@ -56,7 +57,7 @@ def grab_commits(author, repo_name, cut_off_date): # Commit[]: parses for new co
 
     g.close()
 
-def parse_files(author, repo_name, commits): # ContentFile[]: files to run, organized by date 
+def parse_files(author, repo_name, commits): # ContentFile[][]: files to run, organized by date 
     # First item in each is the date of the files, with the following items being the ContentFiles
     # Connecting to repo boilerplate for Github API
     script_dir = os.path.dirname(os.path.abspath(__file__))
