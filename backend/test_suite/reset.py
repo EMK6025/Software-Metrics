@@ -26,14 +26,26 @@ if __name__ == "__main__":
         FOREIGN KEY (project_id) REFERENCES projects(project_id),
         file TEXT NOT NULL,
         metric TEXT NOT NULL,
-        value INTEGER NOT NULL, 
+        value INTEGER NOT NULL,  
+        date TEXT NOT NULL
+        )
+      """
+    create_totals_table_cmd = """
+      CREATE TABLE IF NOT EXISTS totals
+        (
+        project_id INTEGER NOT NULL,
+        FOREIGN KEY (project_id) REFERENCES projects(project_id),
+        metric TEXT NOT NULL,
+        value INTEGER NOT NULL,
         date TEXT NOT NULL
         )
       """
     # Execute the query to create the projects table
-    cursor.execute("DROP TABLE projects")
+    cursor.execute("DROP TABLE IF EXISTS projects;")
     cursor.execute(create_projects_table_cmd)
-    cursor.execute("DROP TABLE files")
+    cursor.execute("DROP TABLE IF EXISTS files")
+    cursor.execute(create_files_table_cmd)
+    cursor.execute("DROP TABLE IF EXISTS totals")
     cursor.execute(create_files_table_cmd)
 
     # Save changes to the database and close the connection
