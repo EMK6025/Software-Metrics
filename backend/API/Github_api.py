@@ -1,85 +1,91 @@
-from github import Github, Auth
 import os
 from datetime import datetime, timezone
+from typing import List, Any
+import github
+from github import Github, Auth
 
-def update_required(author, repo_name, cut_off_date): # Boolean: whether or not an update is required
-    # Grabbing file path to keys.txt
+def get_github_instance() -> Github:
+    # Function to get authenticated GitHub instance
     script_dir = os.path.dirname(os.path.abspath(__file__))
     keys_path = os.path.join(script_dir, "keys.txt")
-
-    # Reading private access token
     with open(keys_path, "r") as file:
         key = file.readline().strip()
-
-    # Public Web Github
     auth = Auth.Token(key)
-    g = Github(auth=auth)
+    return Github(auth=auth)
 
+def update_required(git: Github, author: str, repo_name: str, cut_off_date: datetime.date) -> bool: 
+    git = get_github_instance()
     # Get repository
-    repo = g.get_repo(f"{author}/{repo_name}")
-
+    repo = git.get_repo(f"{author}/{repo_name}")
     cut_off_date = cut_off_date.replace(tzinfo=timezone.utc)
 
-    cur_date = repo.get_commits()[0].commit.author.date # Grab time of most recent commit
-    if cut_off_date > cur_date: # No (more) new commits
-        g.close()
+    # Fetch the most recent commit date
+    cur_date = repo.get_commits()[0].commit.author.date
+    if cut_off_date > cur_date:  # No (more) new commits
         return False
     
-    g.close()
     return True
 
-def grab_commits(author, repo_name, cut_off_date): # Commit[]: parses for new commits #FIX - NEED TO PARSE FOR ALL JAVA PROGRAMS
-    # Connecting to repo boilerplate for Github API
-    
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    keys_path = os.path.join(script_dir, "keys.txt")
-    with open(keys_path, "r") as file:
-        key = file.readline().strip()
-    auth = Auth.Token(key)
-    g = Github(auth=auth)
-    repo = g.get_repo(f"{author}/{repo_name}")
-    
-    # Parse for new commits, sorted by dates
+def grab_commits(git: Github, author: str, repo_name: str, cut_off_date: datetime.date) -> List[List[github.Commit]]: 
+    git = get_github_instance()
+    repo = git.get_repo(f"{author}/{repo_name}")
     cut_off_date = cut_off_date.date()
     commit_date = repo.get_commits()[0].commit.author.date.date()
-    selected_commits = [repo.get_commits()[0]]
+    selected_commits = []
+    cur = []
+
+    try:
+        # Fetch commits from the master branch
+        commits = repo.get_commits(sha="master", since=cut_off_date)
+        if commits.totalCount == 0:
+            raise ValueError("No commits found in master branch")
+    except ValueError:  # If no commits in master, fallback to 'main'
+        commits = repo.get_commits(sha="main", since=cut_off_date)
 
     # Iterate through commits
-    for commit in repo.get_commits():
-        if cut_off_date > commit_date: # no (more) new commits
-            g.close()
+    for commit in commits:
+        if cut_off_date > commit_date:  # No (more) new commits
+            selected_commits.append(cur)
             return selected_commits
-        # only need latest commit for each calendar date
+        
         if commit_date != commit.commit.author.date.date():  
-            # commit is on a different date, and also needs to be processed
+            selected_commits.append(cur)
             commit_date = commit.commit.author.date.date()
-            selected_commits.append(commit)
+            cur = [commit]
+        else:
+            cur.append(commit)
 
-    g.close()
+    return selected_commits
 
-def parse_files(author, repo_name, commits): # ContentFile[][]: files to run, organized by date 
-    # First item in each is the date of the files, with the following items being the ContentFiles
-    # Connecting to repo boilerplate for Github API
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    keys_path = os.path.join(script_dir, "keys.txt")
-    with open(keys_path, "r") as file:
-        key = file.readline().strip()
-    auth = Auth.Token(key)
-    g = Github(auth=auth)
-    repo = g.get_repo(f"{author}/{repo_name}")
+def parse_files(git: Github, author: str, repo_name: str, commits_array: List[List[Any]]) -> List[List[Any]]: # ContentFile[][]: files to run, organized by date 
+    repo = git.get_repo(f"{author}/{repo_name}")
     target_file_extension = {".java", ".css"}
     files = []
 
-    for commit in commits:
-        files_items = []
-        for file in commit.files:
-            if os.path.splitext(file.filename)[1] in target_file_extension:
-                if file.status != "removed": # Only attempt to get contents if the file was not deleted
-                    files_items.apphend(repo.get_contents(file.filename, ref=commit.sha))
-                #     decoded_content = base64.b64decode(file_content.content).decode('utf-8')
-        files.apphend([commit.commit.author.date.date(), files_items])
-    return files
+    for commits in commits_array:
+        try:
+            if not commits:
+                raise ValueError("Empty commit batch found. Skipping this batch.")
 
+            files_items = []
+            marked = set()  # Tracks files that have already been added
+
+            for commit in commits:
+                for file in commit.files:
+                    filename = file.filename  # Correct attribute
+                    if os.path.splitext(filename)[1] in target_file_extension:
+                        if file.status != "removed" and filename not in marked:  
+                            files_items.append(repo.get_contents(filename, ref=commit.sha))
+                            marked.add(filename)  # Mark file as processed
+
+            files.append([commits[0].commit.author.date.date(), files_items])  
+
+        except ValueError as e:
+            print(f"Warning: {e}")  # Log the error and continue instead of stopping
+            continue  # Skip this commit batch and move to the next one
+    
+    # First item in each is the date of the files, with the following items being the ContentFiles
+    return files
 
 if __name__ == "__main__":
     author = "EMK6025"
