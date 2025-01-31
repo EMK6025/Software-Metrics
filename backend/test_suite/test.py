@@ -13,7 +13,7 @@ def test_project(author, project):
     """
     git = Github_api.get_github_connection()
     conn = Flask_api.get_sql_connection()
-    
+    # FINISH later
     process_update.main()
 
 
