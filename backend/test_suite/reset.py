@@ -20,21 +20,21 @@ if __name__ == "__main__":
         )
       """
     create_files_table_cmd = """
-      CREATE TABLE IF NOT EXISTS files
-        (
+      CREATE TABLE IF NOT EXISTS files (
         project_id INTEGER NOT NULL,
-        FOREIGN KEY (project_id) REFERENCES projects(project_id),
+        FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE,
         file TEXT NOT NULL,
         metric TEXT NOT NULL,
-        value INTEGER NOT NULL,  
-        date TEXT NOT NULL
-        )
+        value INTEGER NOT NULL,
+        date DATETIME DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(project_id, file, metric, date)
+    )
       """
     create_totals_table_cmd = """
       CREATE TABLE IF NOT EXISTS totals
         (
         project_id INTEGER NOT NULL,
-        FOREIGN KEY (project_id) REFERENCES projects(project_id),
+        FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE,
         metric TEXT NOT NULL,
         value INTEGER NOT NULL,
         date TEXT NOT NULL
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     cursor.execute("DROP TABLE IF EXISTS files")
     cursor.execute(create_files_table_cmd)
     cursor.execute("DROP TABLE IF EXISTS totals")
-    cursor.execute(create_files_table_cmd)
+    cursor.execute(create_totals_table_cmd)
 
     # Save changes to the database and close the connection
     conn.commit()

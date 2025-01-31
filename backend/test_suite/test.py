@@ -1,23 +1,22 @@
 import os
 import subprocess
 import sqlite3
+import process_update
+from API import Flask_api, Github_api
 
-def test_project(project_name, metric_name):
+def test_project(author, project):
     """
     Test a project by running a metric on it.
 
     :param project_name: The name of the project to test.
     :param metric_name: The name of the metric to run on the project.
     """
-    # Run the process_project.py script as a subprocess and capture its output
-    result = subprocess.run(
-                    ['python', 'process_project.py', project_name, metric_name],
-                    capture_output=True,
-                    text=True,
-                )
-    # Print the standard output and standard error captured from the subprocess
-    print("Stdout:", result.stdout)
-    print("Stderr:", result.stderr)
+    git = Github_api.get_github_connection()
+    conn = Flask_api.get_sql_connection()
+    
+    process_update.main()
+
+
 
 def test_file(proj, dir, file, metric_name):
     """

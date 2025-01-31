@@ -4,8 +4,8 @@ from typing import List, Any
 import github
 from github import Github, Auth
 
-def get_github_instance() -> Github:
-    # Function to get authenticated GitHub instance
+def get_github_connection() -> Github:
+    # Function to connect to Github API
     script_dir = os.path.dirname(os.path.abspath(__file__))
     keys_path = os.path.join(script_dir, "keys.txt")
     with open(keys_path, "r") as file:
@@ -14,7 +14,6 @@ def get_github_instance() -> Github:
     return Github(auth=auth)
 
 def update_required(git: Github, author: str, repo_name: str, cut_off_date: datetime.date) -> bool: 
-    git = get_github_instance()
     # Get repository
     repo = git.get_repo(f"{author}/{repo_name}")
     cut_off_date = cut_off_date.replace(tzinfo=timezone.utc)
@@ -27,7 +26,6 @@ def update_required(git: Github, author: str, repo_name: str, cut_off_date: date
     return True
 
 def grab_commits(git: Github, author: str, repo_name: str, cut_off_date: datetime.date) -> List[List[github.Commit]]: 
-    git = get_github_instance()
     repo = git.get_repo(f"{author}/{repo_name}")
     cut_off_date = cut_off_date.date()
     commit_date = repo.get_commits()[0].commit.author.date.date()
