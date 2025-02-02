@@ -6,13 +6,10 @@ from typing import List
 from ..API import SQL_api
 from datetime import datetime, timezone
 
-current_time = datetime.now()
-print(current_time)  # Example output: 2025-02-02 14:30:45.123456
-
 def main(conn: sqlite3.Connection, project_id: int, files: List):
-    select_cmd = f"SELECT COUNT(*) FROM files WHERE project_id = ? AND file = ? AND metric = ? AND date = ?"
-    insert_cmd = f"INSERT INTO files (project_id, file, metric, value, date) VALUES (?, ?, ?, ?, ?)"
-    update_timestamp_cmd = f"UPDATE projects SET last_update = ? WHERE project_id = ?"
+    select_cmd = f"SELECT COUNT(*) FROM files_db WHERE project_id = ? AND file_name = ? AND metric_name = ? AND date = ?"
+    insert_cmd = f"INSERT INTO files_db (project_id, file_name, metric_name, value, date) VALUES (?, ?, ?, ?, ?)"
+    update_timestamp_cmd = f"UPDATE projects_db SET last_update = ? WHERE project_id = ?"
     metrics_folder = "../metrics"
     cursor = conn.cursor()
 

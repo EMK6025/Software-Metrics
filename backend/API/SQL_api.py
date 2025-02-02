@@ -6,4 +6,11 @@ def get_sql_connection() -> sqlite3.Connection:
     return conn
 
 def get_project_id(conn: sqlite3.Connection, author: str, repo_name: str) -> int:
-    conn.execute("SELECT project_ID FROM projects WHERE author = ? and project = ?")
+    cursor = conn.cursor()
+    cursor.execute("SELECT project_id FROM projects_db WHERE author = ? AND project = ?", (author, repo_name))
+    result = cursor.fetchone()
+    
+    if result:
+        return result[0] 
+    else:
+        raise ValueError("Project not found")
