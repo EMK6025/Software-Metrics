@@ -3,8 +3,6 @@ from flask_cors import CORS
 import sqlite3
 import SQL_api
 
-
-
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests
 
