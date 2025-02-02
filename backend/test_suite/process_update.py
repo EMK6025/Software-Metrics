@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 current_time = datetime.now()
 print(current_time)  # Example output: 2025-02-02 14:30:45.123456
 
-def main(conn: sqlite3.Connection, project_id: int, commits: List):
+def main(conn: sqlite3.Connection, project_id: int, files: List):
     select_cmd = f"SELECT COUNT(*) FROM files WHERE project_id = ? AND file = ? AND metric = ? AND date = ?"
     insert_cmd = f"INSERT INTO files (project_id, file, metric, value, date) VALUES (?, ?, ?, ?, ?)"
     update_timestamp_cmd = f"UPDATE projects SET last_update = ? WHERE project_id = ?"
@@ -24,7 +24,7 @@ def main(conn: sqlite3.Connection, project_id: int, commits: List):
         spec.loader.exec_module(metric)
 
         # Run metric on each file and insert result into files table
-        for files in commits:
+        for files in files:
             date = files[0]
             for file in files[1:]:
                 # cache decoded result first probably, then run metrics 
