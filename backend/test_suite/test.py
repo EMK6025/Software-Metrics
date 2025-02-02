@@ -1,8 +1,10 @@
+import sys
 import os
 import subprocess
 import sqlite3
-import process_update
-from API import Flask_api, Github_api, SQL_api
+from backend.test_suite import process_update
+from backend.API import Flask_api, Github_api, SQL_api
+
 import datetime
 
 
@@ -15,14 +17,17 @@ def test_api(author, project, cut_off_date):
     """
     git = Github_api.get_github_connection()
     conn = SQL_api.get_sql_connection()
+    cursor = conn.cursor()
+    project_id = SQL_api.get_project_id(conn, author, project)
 
     if Github_api.update_required(git, author, project, cut_off_date):
          commits = Github_api.grab_commits(git, author, project, cut_off_date)
          files = Github_api.parse_files(git, author, project, commits)
-         process_update.main()
+         process_update.main(conn, project_id, commits)
 
-    
-    process_update.main()
+    select_cmd = f"SELECT * FROM projects WHERE project_id = ?"
+    cursor.execute(select_cmd, (project_id))
+    print(cursor.fetchall())
 
 def test_file(proj, dir, file, metric_name):
     """
@@ -115,4 +120,5 @@ def display_table(table):
 if __name__ == "__main__":
     author = "EMK6025"
     repo = "Software-Metrics"
-    cut_off_date = datetime.strptime("2025-01-23 00:00:00", "%Y-%m-%d %H:%M:%S")
+    cut_off_date = datetime.strptime("2025-01-15 00:00:00", "%Y-%m-%d %H:%M:%S")
+    test_api(author, repo, cut_off_date)

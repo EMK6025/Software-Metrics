@@ -14,6 +14,7 @@ def main(conn: sqlite3.Connection, project_id: int, commits: List):
     insert_cmd = f"INSERT INTO files (project_id, file, metric, value, date) VALUES (?, ?, ?, ?, ?)"
     update_timestamp_cmd = f"UPDATE projects SET last_update = ? WHERE project_id = ?"
     metrics_folder = "../metrics"
+    cursor = conn.cursor()
 
     for metric_name in os.listdir(metrics_folder):
         # Importlib boilerplate to load metrics dynamically
@@ -32,13 +33,13 @@ def main(conn: sqlite3.Connection, project_id: int, commits: List):
 
                 try:
                     # Check if the entry already exists in the table
-                    conn.execute(select_cmd, (project_id, file, metric_name, date))
-                    count = conn.fetchone()[0]
+                    cursor.execute(select_cmd, (project_id, file, metric_name, date))
+                    count = cursor.fetchone()[0]
                     if count > 0:
                         print("File already exists in the table, skipping insertion.")
                     else:
                         # Entry does not exist, insert a new entry
-                        conn.execute(insert_cmd, (project_id, file, metric_name, result, date))
+                        cursor.execute(insert_cmd, (project_id, file, metric_name, result, date))
                 except sqlite3.Error as e:
                     print(f"SQLite error: {e}")
                     continue
@@ -46,6 +47,6 @@ def main(conn: sqlite3.Connection, project_id: int, commits: List):
                     print(f"Value/IOError: {e}")
                     continue
     date = datetime.now().replace(tzinfo=timezone.utc)
-    conn.execute(update_timestamp_cmd, (date, project_id))
+    cursor.execute(update_timestamp_cmd, (date, project_id))
 
 
