@@ -15,7 +15,7 @@ if __name__ == "__main__":
         project_id INTEGER PRIMARY KEY AUTOINCREMENT,
         author TEXT NOT NULL,
         project TEXT NOT NULL,
-        last_update TEXT,
+        last_update DATETIME,
         number_of_entries INTEGER
         )
       """
