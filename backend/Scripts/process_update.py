@@ -45,5 +45,6 @@ def main(conn: sqlite3.Connection, project_id: int, files: List):
                     continue
     date = datetime.now().replace(tzinfo=timezone.utc)
     cursor.execute(update_timestamp_cmd, (date, project_id))
+    conn.commit()
 
 

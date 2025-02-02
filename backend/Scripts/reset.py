@@ -1,11 +1,8 @@
 import sqlite3
 
-if __name__ == "__main__":
-    
-
-
+def main():
 # Relative file path to the database
-    db_path = '../database.db'
+    db_path = '/database.db'
 
     # Connect to the SQLite database
     conn = sqlite3.connect(db_path)
@@ -46,10 +43,10 @@ if __name__ == "__main__":
     """
     # Execute the query to create the projects table
     cursor.execute("DROP TABLE IF EXISTS projects_db")
-    cursor.execute(create_projects_table_cmd)
     cursor.execute("DROP TABLE IF EXISTS files_db")
-    cursor.execute(create_files_table_cmd)
     cursor.execute("DROP TABLE IF EXISTS totals_db")
+    cursor.execute(create_projects_table_cmd)
+    cursor.execute(create_files_table_cmd)
     cursor.execute(create_totals_table_cmd)
 
     # Save changes to the database and close the connection

@@ -4,38 +4,49 @@ import os
 # Ensure the project root (smf/) is in sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-from backend.test_suite import process_update
-from backend.API import Github_api, SQL_api
+from Backend.Scripts import process_update
+from Backend.API import Github_api, SQL_api
 
 from datetime import datetime, timezone
 
-# def test_api(author, project, cut_off_date):
-#     """
-#     Test the api integration.
+def test_api(author, project, cut_off_date):
+    """
+    Test the api integration.
 
-#     :param author: The author of the project to test with
-#     :param project: The name of the project.
-#     """
-#     git = Github_api.get_github_connection()
-#     conn = SQL_api.get_sql_connection()
-#     cursor = conn.cursor()
-#     project_id = SQL_api.get_project_id(conn, author, project)
+    :param author: The author of the project to test with
+    :param project: The name of the project.
+    """
+    git = Github_api.get_github_connection()
+    conn = SQL_api.get_sql_connection()
+    cursor = conn.cursor()
+    project_id = SQL_api.get_project_id(conn, author, project)
 
-#     if Github_api.update_required(git, author, project, cut_off_date):
-#          commits = Github_api.grab_commits(git, author, project, cut_off_date)
-#          files = Github_api.parse_files(git, author, project, commits)
-#          process_update.main(conn, project_id, files)
+    if Github_api.update_required(git, author, project, cut_off_date):
+         commits = Github_api.grab_commits(git, author, project, cut_off_date)
+         files = Github_api.parse_files(git, author, project, commits)
+         process_update.main(conn, project_id, files)
 
-#     select_cmd = f"SELECT * FROM projects_db WHERE project_id = ?"
-#     cursor.execute(select_cmd, (project_id))
-#     print(cursor.fetchall())
+    select_cmd = f"SELECT * FROM projects_db WHERE project_id = ?"
+    cursor.execute(select_cmd, (project_id))
+    print(cursor.fetchall())
+    conn.close()
+
+def print_database():
+    conn = SQL_api.get_sql_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = cursor.fetchall()
+    for table in tables:
+        print(table[0])
+    conn.close()
+
 
 if __name__ == "__main__":
     # author = "EMK6025"
     # repo = "Software-Metrics"
     # cut_off_date = datetime.strptime("2025-01-15 00:00:00", "%Y-%m-%d %H:%M:%S")
     # test_api(author, repo, cut_off_date)
-    print("hello world")
+    print_database()
 
     
 
