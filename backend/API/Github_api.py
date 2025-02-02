@@ -14,6 +14,9 @@ def get_github_connection() -> Github:
     return Github(auth=auth)
 
 def update_required(git: Github, author: str, repo_name: str, cut_off_date: datetime.date) -> bool: 
+
+    #If no new git commits, update last_update timestamp for project 
+
     # Get repository
     repo = git.get_repo(f"{author}/{repo_name}")
     cut_off_date = cut_off_date.replace(tzinfo=timezone.utc)
@@ -25,9 +28,9 @@ def update_required(git: Github, author: str, repo_name: str, cut_off_date: date
     
     return True
 
-def grab_commits(git: Github, author: str, repo_name: str, cut_off_date: datetime.date) -> List[List[github.Commit]]: 
+def grab_commits(git: Github, author: str, repo_name: str, cut_off_date: datetime) -> List[List[github.Commit]]: 
     repo = git.get_repo(f"{author}/{repo_name}")
-    cut_off_date = cut_off_date.date()
+    cut_off_date = cut_off_date
     commit_date = repo.get_commits()[0].commit.author.date.date()
     selected_commits = []
     cur = []
@@ -38,14 +41,16 @@ def grab_commits(git: Github, author: str, repo_name: str, cut_off_date: datetim
         if commits.totalCount == 0:
             raise ValueError("No commits found in master branch")
     except ValueError:  # If no commits in master, fallback to 'main'
-        commits = repo.get_commits(sha="main", since=cut_off_date)
+        try:
+            # Fetch commits from the main branch
+            commits = repo.get_commits(sha="main", since=cut_off_date)
+            if commits.totalCount == 0:
+                raise ValueError("No commits found in main branch")
+        except ValueError:  # If no commits in main, either repo has issue or update_required() is wrong
+            return []
 
     # Iterate through commits
     for commit in commits:
-        if cut_off_date > commit_date:  # No (more) new commits
-            selected_commits.append(cur)
-            return selected_commits
-        
         if commit_date != commit.commit.author.date.date():  
             selected_commits.append(cur)
             commit_date = commit.commit.author.date.date()
