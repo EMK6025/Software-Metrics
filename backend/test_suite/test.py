@@ -2,21 +2,27 @@ import os
 import subprocess
 import sqlite3
 import process_update
-from API import Flask_api, Github_api
+from API import Flask_api, Github_api, SQL_api
+import datetime
 
-def test_project(author, project):
+
+def test_api(author, project, cut_off_date):
     """
-    Test a project by running a metric on it.
+    Test the api integration.
 
-    :param project_name: The name of the project to test.
-    :param metric_name: The name of the metric to run on the project.
+    :param author: The author of the project to test with
+    :param project: The name of the project.
     """
     git = Github_api.get_github_connection()
-    conn = Flask_api.get_sql_connection()
-    # FINISH later
+    conn = SQL_api.get_sql_connection()
+
+    if Github_api.update_required(git, author, project, cut_off_date):
+         commits = Github_api.grab_commits(git, author, project, cut_off_date)
+         files = Github_api.parse_files(git, author, project, commits)
+         process_update.main()
+
+    
     process_update.main()
-
-
 
 def test_file(proj, dir, file, metric_name):
     """
@@ -107,14 +113,6 @@ def display_table(table):
         print("".join(str(item)))
 
 if __name__ == "__main__":
-    db_path = '../database.db'
-
-    # Connect to the SQLite database
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-
-    # Example usage of the functions
-
-    # Save changes to the database and close the connection
-    conn.commit()
-    conn.close()
+    author = "EMK6025"
+    repo = "Software-Metrics"
+    cut_off_date = datetime.strptime("2025-01-23 00:00:00", "%Y-%m-%d %H:%M:%S")
