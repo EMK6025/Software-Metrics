@@ -9,8 +9,8 @@ def reset(conn: sqlite3.Connection):
             project_id INTEGER PRIMARY KEY AUTOINCREMENT,
             author TEXT NOT NULL,
             project TEXT NOT NULL,
-            last_update DATETIME,
-            number_of_entries INTEGER
+            last_update DATETIME DEFAULT 0,
+            number_of_entries INTEGER DEFAULT 0
         );
     """
     

@@ -13,7 +13,7 @@ def get_github_connection() -> Github:
     auth = Auth.Token(key)
     return Github(auth=auth)
 
-def update_required(git: Github, author: str, repo_name: str, cut_off_date: datetime.date) -> bool: 
+def update_required(git: Github, author: str, repo_name: str, cut_off_date: datetime) -> bool: 
 
     #If no new git commits, update last_update timestamp for project 
 
@@ -28,28 +28,31 @@ def update_required(git: Github, author: str, repo_name: str, cut_off_date: date
     
     return True
 
-def grab_commits(git: Github, author: str, repo_name: str, cut_off_date: datetime) -> List[List[github.Commit]]: 
+def grab_commits(git: Github, author: str, repo_name: str, cut_off_date: datetime) -> List[List]: 
     repo = git.get_repo(f"{author}/{repo_name}")
-    cut_off_date = cut_off_date
+    branches = repo.get_branches()
+    selected_branch = branches[0].name
+    
+    if any(branch.name == "main" for branch in branches):
+        selected_branch = "main"
+    elif any(branch.name == "master" for branch in branches):
+        selected_branch = "master"
+
+    try:
+        # Fetch commits from selected branch
+        commits = repo.get_commits(sha=selected_branch, since=cut_off_date)
+        if commits.totalCount == 0:
+            raise ValueError("No commits found in master branch")
+        else:
+            return parse_commits(repo, commits)
+    except ValueError:  # If no commits in master, fallback to 'main'
+        pass
+
+def parse_commits(repo: github.Repository, commits: github.Commit):
+    # Iterate through commits
     commit_date = repo.get_commits()[0].commit.author.date.date()
     selected_commits = []
     cur = []
-
-    try:
-        # Fetch commits from the master branch
-        commits = repo.get_commits(sha="master", since=cut_off_date)
-        if commits.totalCount == 0:
-            raise ValueError("No commits found in master branch")
-    except ValueError:  # If no commits in master, fallback to 'main'
-        try:
-            # Fetch commits from the main branch
-            commits = repo.get_commits(sha="main", since=cut_off_date)
-            if commits.totalCount == 0:
-                raise ValueError("No commits found in main branch")
-        except ValueError:  # If no commits in main, either repo has issue or update_required() is wrong
-            return []
-
-    # Iterate through commits
     for commit in commits:
         if commit_date != commit.commit.author.date.date():  
             selected_commits.append(cur)
@@ -57,36 +60,35 @@ def grab_commits(git: Github, author: str, repo_name: str, cut_off_date: datetim
             cur = [commit]
         else:
             cur.append(commit)
-
+    selected_commits.append(cur)
     return selected_commits
 
 def parse_files(git: Github, author: str, repo_name: str, commits_array: List[List[Any]]) -> List[List[Any]]: # ContentFile[][]: files to run, organized by date 
     repo = git.get_repo(f"{author}/{repo_name}")
-    target_file_extension = {".java", ".css"}
+    target_file_extension = {".java"}
     files = []
-
     for commits in commits_array:
+        files_items = []
+        marked = set()  # Tracks files that have already been added
+
         try:
             if not commits:
                 raise ValueError("Empty commit batch found. Skipping this batch.")
 
-            files_items = []
-            marked = set()  # Tracks files that have already been added
-
             for commit in commits:
                 for file in commit.files:
-                    filename = file.filename  # Correct attribute
+                    filename = file.filename
                     if os.path.splitext(filename)[1] in target_file_extension:
-                        if file.status != "removed" and filename not in marked:  
+                        if file.status != "removed" and filename not in marked:
                             files_items.append(repo.get_contents(filename, ref=commit.sha))
                             marked.add(filename)  # Mark file as processed
 
-            files.append([commits[0].commit.author.date.date(), files_items])  
+            files.append([commits[0].commit.author.date.date(), files_items])
 
         except ValueError as e:
             print(f"Warning: {e}")  # Log the error and continue instead of stopping
             continue  # Skip this commit batch and move to the next one
-    
+
     # First item in each is the date of the files, with the following items being the ContentFiles
     return files
 

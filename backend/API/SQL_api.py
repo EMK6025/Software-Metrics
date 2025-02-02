@@ -1,7 +1,7 @@
 import sqlite3
 
 def get_sql_connection() -> sqlite3.Connection:
-    conn = sqlite3.connect('./database.db')
+    conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -13,4 +13,4 @@ def get_project_id(conn: sqlite3.Connection, author: str, repo_name: str) -> int
     if result:
         return result[0] 
     else:
-        raise ValueError("Project not found")
+        cursor.execute("INSERT INTO projects_db (author, project) VALUES (?, ?)", (author, repo_name))
