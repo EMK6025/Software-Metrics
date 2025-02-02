@@ -1,11 +1,6 @@
 import sqlite3
 
-def main():
-# Relative file path to the database
-    db_path = '/database.db'
-
-    # Connect to the SQLite database
-    conn = sqlite3.connect(db_path)
+def reset(conn: sqlite3.Connection):
     cursor = conn.cursor()
 
     # SQL statement to create a table for projects
@@ -51,6 +46,5 @@ def main():
 
     # Save changes to the database and close the connection
     conn.commit()
-    conn.close()
 
 
