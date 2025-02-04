@@ -1,14 +1,13 @@
 import sys
 import os
 import base64
-# Ensure the project root (smf/) is in sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from Backend.Scripts import process_update, reset
 from Backend.API import Github_api, SQL_api
 from datetime import datetime, timezone
 
-def test_api(author, project, cut_off_date):
+def test_api(author, project):
+
     """
     Test the api integration.
 
@@ -17,25 +16,28 @@ def test_api(author, project, cut_off_date):
     """
     git = Github_api.get_github_connection()
     conn = SQL_api.get_sql_connection()
-    project_id = SQL_api.get_project_id(conn, author, project)
+    if Github_api.update_required(git, conn, author, project):
+        print("True")
 
-    if Github_api.update_required(git, author, project, cut_off_date):
-        commits = Github_api.grab_commits(git, author, project, cut_off_date)
-        files = Github_api.parse_files(git, author, project, commits)
+    if Github_api.update_required(git, conn, author, project):
+        commits = Github_api.grab_commits(git, conn, author, project)
+        file_groups = Github_api.parse_files(git, author, project, commits)
         #  process_update.main(conn, project_id, files)
-        for file_group in files:
+        for file_group in file_groups:
             date = file_group[0]
-            print(date)
-            for file in file_group[1:]:
+            date_str = date.strftime('%Y-%m-%d')
+            print(str(len(file_group)) + " java files modified in commits on " + date_str)
+            for file in file_group[1]:
                 print(file)
-                # print(decoded_file = base64.b64decode(file.content).decode('utf-8'))
+                decoded_file = base64.b64decode(file.content).decode('utf-8')
+                print(decoded_file)
     # select_cmd = f"SELECT * FROM projects_db WHERE project_id = ?"
     # cursor = conn.cursor()
     # cursor.execute(select_cmd, (project_id))
     # print(cursor.fetchall())
     conn.close()
 
-def print_database():
+def print_databases():
     conn = SQL_api.get_sql_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -44,18 +46,25 @@ def print_database():
         print(table[0])
     conn.close()
 
+def print_table(table: str):
+    conn = SQL_api.get_sql_connection()
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM {table}")
+    tables = cursor.fetchall()
+    for table in tables:
+        print(table[0])
+    print("finished")
+    conn.close()
+
 def reset_sql():
     conn = SQL_api.get_sql_connection()
     reset.reset(conn)
     conn.close()
 
 if __name__ == "__main__":
-    author = "EMK6025"
-    repo = "Software-Metrics"
-    cut_off_date = datetime.strptime("2025-01-31 00:00:00", "%Y-%m-%d %H:%M:%S")
-    test_api(author, repo, cut_off_date)
-    # reset_sql()
-    # print_database()
+    author = "janbodnar"
+    repo = "Java-Snake-Game"
+    test_api(author, repo)
 
     
 

@@ -1,9 +1,10 @@
 import os
+import sqlite3
 from datetime import datetime, timezone
 from typing import List, Any
 import github
 from github import Github, Auth
-
+from . import SQL_api
 def get_github_connection() -> Github:
     # Function to connect to Github API
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -13,22 +14,23 @@ def get_github_connection() -> Github:
     auth = Auth.Token(key)
     return Github(auth=auth)
 
-def update_required(git: Github, author: str, repo_name: str, cut_off_date: datetime) -> bool: 
-
-    #If no new git commits, update last_update timestamp for project 
+def update_required(git: Github, conn: sqlite3.Connection, author: str, repo_name: str) -> bool: 
+    # Get cut_off_date
+    cursor = conn.cursor()
+    cut_off_date = SQL_api.get_project_update(conn, author, repo_name)
 
     # Get repository
     repo = git.get_repo(f"{author}/{repo_name}")
     cut_off_date = cut_off_date.replace(tzinfo=timezone.utc)
 
     # Fetch the most recent commit date
-    cur_date = repo.get_commits()[0].commit.author.date
-    if cut_off_date > cur_date:  # No (more) new commits
+    most_recent = repo.get_commits()[0].commit.author.date
+    if cut_off_date > most_recent:  # No (more) new commits
         return False
-    
+
     return True
 
-def grab_commits(git: Github, author: str, repo_name: str, cut_off_date: datetime) -> List[List]: 
+def grab_commits(git: Github, conn: sqlite3.Connection, author: str, repo_name: str) -> List[List]: 
     repo = git.get_repo(f"{author}/{repo_name}")
     branches = repo.get_branches()
     selected_branch = branches[0].name
@@ -40,7 +42,8 @@ def grab_commits(git: Github, author: str, repo_name: str, cut_off_date: datetim
 
     try:
         # Fetch commits from selected branch
-        commits = repo.get_commits(sha=selected_branch, since=cut_off_date)
+        cut_off_datetime = SQL_api.get_project_update(conn, author, repo_name)
+        commits = repo.get_commits(sha=selected_branch, since=cut_off_datetime)
         if commits.totalCount == 0:
             raise ValueError("No commits found in master branch")
         else:
@@ -83,20 +86,12 @@ def parse_files(git: Github, author: str, repo_name: str, commits_array: List[Li
                             files_items.append(repo.get_contents(filename, ref=commit.sha))
                             marked.add(filename)  # Mark file as processed
 
-            files.append([commits[0].commit.author.date.date(), files_items])
-
         except ValueError as e:
             print(f"Warning: {e}")  # Log the error and continue instead of stopping
             continue  # Skip this commit batch and move to the next one
+        if len(files_items) > 0:
+            files.append([commits[0].commit.author.date.date(), files_items])
+
 
     # First item in each is the date of the files, with the following items being the ContentFiles
     return files
-
-if __name__ == "__main__":
-    author = "EMK6025"
-    repo = "Software-Metrics"
-    cut_off_date = datetime.strptime("2025-01-23 00:00:00", "%Y-%m-%d %H:%M:%S")
-
-    if update_required(author, repo, cut_off_date):
-        commits = grab_commits(author, repo, cut_off_date)
-        parse_files(author, repo, commits)
