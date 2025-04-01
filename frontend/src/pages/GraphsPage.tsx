@@ -7,7 +7,7 @@ function GraphsPage() {
   // Access the sidebar state using SidebarProvider hook
   const { isOpened } = useSidebar();
 
-  // Access the projects state using ProjectsProvider hook
+  // Access the projects state using FlaskProvider hook
   const { projects, loading, error } = useFlask();
 
   if (loading) {
